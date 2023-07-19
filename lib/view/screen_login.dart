@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/controller/authcontroller.dart';
+import 'package:socion/view/screen_createuser.dart';
+import 'package:socion/view/screen_forgotpassword.dart';
 import 'package:socion/view/screen_signin.dart';
 import 'package:socion/view/widget/widget.dart';
 
@@ -8,27 +11,29 @@ import 'package:socion/view/widget/widget.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  final TextEditingController username = TextEditingController();
-  final TextEditingController password = TextEditingController();
+  final getctr = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
                 kheight30,
                 const Text('Login',style: TextStyle(color: kwhite),),
                 kheight30,
-                TextFieldWidget(controller: username, hint: 'Email'),
+                TextFieldWidget(controller: getctr.loginemail, hint: 'Email'),
                 kheight30,
-                TextFieldWidget(controller
-                : password, hint: 'Password'),
+                HideTextFieldWidget(controller: getctr.loginpassword, hint: 'Password'),
                 kheight30,
-                const Text('Forgot password ?',style: TextStyle(color: kwhite)),
+                InkWell(
+                  onTap: () {
+                    Get.to(()=>ForgotPasswordScreen());
+                  },
+                  child: const Text('Forgot password ?',style: TextStyle(color: kblue))),
                 kheight30,
                 Container(
                   decoration: BoxDecoration(
@@ -41,7 +46,7 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     
                     onPressed: () {
-                    
+                      getctr.signIn();
                   },child: const Center(child: Text('Login',style: TextStyle(color: kwhite))),),
                 ),
                 kheight30,
@@ -62,15 +67,26 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: const Text('Sign Up',style: TextStyle(color: kblue))),
                 kheight30, 
-                Container(
-                  width: double.infinity,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: kdarkgrey,
-                    
-                   ),
-                   
+                InkWell(
+                  onTap: () async{
+                    await getctr.googleSignIn();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: kdarkgrey,
+                     ),
+                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      
+                      Image.asset('assets/google.png',height: 25),
+                      kwidth10,
+                      const Text("Use Google Account",style: TextStyle(color: kwhite)),
+                     ],),
+                  ),
                 )
                   
                 

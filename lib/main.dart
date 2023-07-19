@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/screen_login.dart';
+import 'package:socion/view/screen_splash.dart';
 
 void main(List<String> args) async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: kblack
       ),
-      home: LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const kwhite = Colors.white;
 const kblack = Colors.black;
 const kblue = Colors.blue;
+const kgreen = Colors.green;
 const kdarkgrey = Color(0xff272727);
 
 //Constant variable
@@ -10,4 +11,5 @@ const kdarkgrey = Color(0xff272727);
 final textcolor = kwhite;
 
 const kheight30 = SizedBox(height: 30,);
+const kwidth10 = SizedBox(width: 10,);
 
