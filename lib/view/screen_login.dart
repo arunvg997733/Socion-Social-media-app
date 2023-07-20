@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/controller/authcontroller.dart';
-import 'package:socion/view/screen_createuser.dart';
 import 'package:socion/view/screen_forgotpassword.dart';
 import 'package:socion/view/screen_signin.dart';
 import 'package:socion/view/widget/widget.dart';
@@ -12,6 +11,9 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final getctr = Get.put(AuthController());
+
+  final TextEditingController loginemail = TextEditingController();
+  final TextEditingController loginpassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,9 @@ class LoginScreen extends StatelessWidget {
                 kheight30,
                 const Text('Login',style: TextStyle(color: kwhite),),
                 kheight30,
-                TextFieldWidget(controller: getctr.loginemail, hint: 'Email'),
+                TextFieldWidget(controller: loginemail, hint: 'Email'),
                 kheight30,
-                HideTextFieldWidget(controller: getctr.loginpassword, hint: 'Password'),
+                HideTextFieldWidget(controller: loginpassword, hint: 'Password'),
                 kheight30,
                 InkWell(
                   onTap: () {
@@ -46,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     
                     onPressed: () {
-                      getctr.signIn();
+                      getctr.signIn(loginemail.text,loginpassword.text);
                   },child: const Center(child: Text('Login',style: TextStyle(color: kwhite))),),
                 ),
                 kheight30,
@@ -70,6 +72,8 @@ class LoginScreen extends StatelessWidget {
                 InkWell(
                   onTap: () async{
                     await getctr.googleSignIn();
+                    await getctr.auth.currentUser!.reload();
+                    getctr.changeuserstatus();
                   },
                   child: Container(
                     width: double.infinity,

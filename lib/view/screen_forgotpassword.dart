@@ -19,7 +19,7 @@ class ForgotPasswordScreen extends StatelessWidget {
           child: Column(
             children: [
               kheight30,
-              Text('Reset Password',style: TextStyle(color: kwhite),),
+              const Text('Reset Password',style: TextStyle(color: kwhite),),
               kheight30,
               TextFieldWidget(controller: reset, hint: 'Email'),
               kheight30,

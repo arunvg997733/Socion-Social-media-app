@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/authcontroller.dart';
@@ -25,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return  const Scaffold(
       body: Center(child: Text('Welcome to Socion',style: TextStyle(color: kwhite),)),
     );
   }

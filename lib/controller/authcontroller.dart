@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socion/view/screen_createuser.dart';
 import 'package:socion/view/screen_login.dart';
+import 'package:socion/view/screen_main.dart';
 import 'package:socion/view/screen_profile.dart';
 
 class AuthController extends GetxController{
@@ -12,23 +13,18 @@ class AuthController extends GetxController{
   GoogleSignIn google = GoogleSignIn();
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firebasedb = FirebaseFirestore.instance;
-  TextEditingController loginemail = TextEditingController();
-  TextEditingController loginpassword = TextEditingController();
-  TextEditingController username = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-  TextEditingController confirmpassword = TextEditingController();
-
   var verify = false.obs;
+
+  
 
   changeuserstatus(){
     verify.value = auth.currentUser!.emailVerified;
   }
 
 
-  signUp()async{
+  signUp(String email,String password)async{
     try {
-      await auth.createUserWithEmailAndPassword(email: email.text, password: password.text);
+      await auth.createUserWithEmailAndPassword(email: email, password: password);
       Get.snackbar("Success", "Your Account is created. Please login");
       Get.to(()=>LoginScreen());
     } catch (e) {
@@ -36,9 +32,9 @@ class AuthController extends GetxController{
     }
   }
 
-  signIn()async{
+  signIn(String loginemail,String loginpassword )async{
     try {
-      await auth.signInWithEmailAndPassword(email: loginemail.text, password: loginpassword.text);
+      await auth.signInWithEmailAndPassword(email: loginemail, password: loginpassword);
       if(auth.currentUser!.emailVerified == true){
         Get.offAll(()=>ProfileScreen());
       }else{
@@ -90,7 +86,7 @@ class AuthController extends GetxController{
     if(status == null){
       Get.offAll(()=>LoginScreen());
     }else{
-      Get.offAll(()=>ProfileScreen());
+      Get.offAll(()=>MainScreen());
     }
   }
 
@@ -105,6 +101,7 @@ class AuthController extends GetxController{
         );
         await auth.signInWithCredential(authcredential);
       }
+      Get.to(()=>CreateUserScreen());
     } catch (e) {
       Get.snackbar("Error", '$e');
     }

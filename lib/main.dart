@@ -2,13 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/core/constant.dart';
-import 'package:socion/view/screen_login.dart';
 import 'package:socion/view/screen_splash.dart';
 
 void main(List<String> args) async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: kblack
       ),
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/controller/authcontroller.dart';
-import 'package:socion/view/screen_profile.dart';
+import 'package:socion/view/screen_main.dart';
 import 'package:socion/view/widget/widget.dart';
 
 class CreateUserScreen extends StatelessWidget {
@@ -34,7 +34,7 @@ class CreateUserScreen extends StatelessWidget {
               kheight30,
               TextField(
                 enabled: false,
-                style: TextStyle(color: kwhite),
+                style: const TextStyle(color: kwhite),
                 controller: email,
                 decoration: InputDecoration(
                   fillColor: kdarkgrey,
@@ -45,11 +45,14 @@ class CreateUserScreen extends StatelessWidget {
                 ),
               ),
               kheight30,
-              Obx(() =>  InkWell(
+              Obx(() =>  
+              InkWell(
                 onTap: ()async {
                   await getcrt.verifyMail(); 
                 },
-                child: getcrt.verify.value == false ? Text('Verify',style: TextStyle(color: kblue)): Text('Verified',style: TextStyle(color: kgreen)))),
+                child: getcrt.verify.value == false ? const Text('Verify',style: TextStyle(color: kblue)): const Text('Verified',style: TextStyle(color: kgreen))
+                ),
+                ),
               
               kheight30,
               
@@ -69,7 +72,7 @@ class CreateUserScreen extends StatelessWidget {
                           Get.snackbar("Alert", "Please Verify your Account");
                         }else{
                           await getcrt.addUserDetails(name.text, email.text);
-                          Get.offAll(()=>ProfileScreen());
+                          Get.offAll(()=>MainScreen());
                         }
                       },child: const Center(child: Text('Next',style: TextStyle(color: kwhite))),),
                     ),
@@ -79,7 +82,7 @@ class CreateUserScreen extends StatelessWidget {
                        await auth.currentUser!.reload();
                        getcrt.changeuserstatus();
                       },
-                      child: Text('Refresh',style: TextStyle(color: kblue))),
+                      child: const Text('Refresh',style: TextStyle(color: kblue))),
                       
             ]
           ),

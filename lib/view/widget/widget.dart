@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:socion/core/constant.dart';
 
+Icon iconStyle(IconData icon){
+  return Icon(icon,color: kwhite,);
+}
+
+Widget textStyle(String text,double size){
+  return Text(text,style:TextStyle(color: kwhite,fontSize: size),);
+}
+
 class TextFieldWidget extends StatelessWidget {
   const TextFieldWidget({
     super.key,
