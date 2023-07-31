@@ -7,7 +7,7 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -17,22 +17,22 @@ class NotificationScreen extends StatelessWidget {
               textStyle('Notification', 20),
               kheight30,
               Column(
-                children: List.generate(30, (index){
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: ListTile(
-                      leading: const CircleAvatar(
-                        radius: 25,
-                        backgroundImage: AssetImage('assets/car.jpeg'),
+                children: List.generate(
+                  30,
+                  (index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          radius: 25,
+                          backgroundImage: AssetImage('assets/car.jpeg'),
+                        ),
+                        title: textStyle('Rahul Prabakaran following you', 12),
                       ),
-                      title: textStyle('Rahul Prabakaran following you', 12),
-                          
-                      
-                    ),
-                  );
-                }),
+                    );
+                  },
+                ),
               )
-        
             ],
           ),
         ),

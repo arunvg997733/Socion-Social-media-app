@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/authcontroller.dart';
-import 'package:socion/core/constant.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,20 +11,27 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   final getctr = Get.put(AuthController());
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(const Duration(seconds: 1), () { 
+    Timer(const Duration(seconds: 1), () {
       getctr.checkuserstatus();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return  const Scaffold(
-      body: Center(child: Text('Welcome to Socion',style: TextStyle(color: kwhite),)),
+    return const Scaffold(
+      body: Center(
+        child: Image(
+          height: 100,
+          image: AssetImage(
+            'assets/Socion Logo.jpg',
+          ),
+        ),
+      ),
     );
   }
 }

@@ -3,76 +3,84 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:socion/view/screen_createuser.dart';
-import 'package:socion/view/screen_login.dart';
-import 'package:socion/view/screen_main.dart';
-import 'package:socion/view/screen_profile.dart';
+import 'package:socion/core/constant.dart';
+import 'package:socion/model/user_model.dart';
+import 'package:socion/view/create_profile_screen/screen_createuser.dart';
+import 'package:socion/view/login_screen/screen_login.dart';
+import 'package:socion/view/main_screen/screen_main.dart';
 
-class AuthController extends GetxController{
-
+class AuthController extends GetxController {
   GoogleSignIn google = GoogleSignIn();
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firebasedb = FirebaseFirestore.instance;
   var verify = false.obs;
 
-  
-
-  changeuserstatus(){
+  changeuserstatus() {
     verify.value = auth.currentUser!.emailVerified;
   }
 
-
-  signUp(String email,String password)async{
+  signUp(String email, String password) async {
     try {
-      await auth.createUserWithEmailAndPassword(email: email, password: password);
-      Get.snackbar("Success", "Your Account is created. Please login");
-      Get.to(()=>LoginScreen());
-    } catch (e) {
-      Get.snackbar(overlayColor: Colors.amber,'Error', '$e');
-    }
-  }
-
-  signIn(String loginemail,String loginpassword )async{
-    try {
-      await auth.signInWithEmailAndPassword(email: loginemail, password: loginpassword);
-      if(auth.currentUser!.emailVerified == true){
-        Get.offAll(()=>ProfileScreen());
-      }else{
-        Get.offAll(()=>CreateUserScreen());
+      await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      Get.snackbar("Success", "Your Account is created");
+      if (auth.currentUser!.emailVerified == true) {
+        Get.offAll(() => MainScreen());
+      } else {
+        Get.offAll(() => CreateUserScreen());
       }
     } catch (e) {
-      Get.snackbar('Error', '$e');
+      Get.snackbar(overlayColor: Colors.amber, 'Error', '$e');
     }
   }
 
-  verifyMail()async{
+  signIn(String loginemail, String loginpassword) async {
+    try {
+      await auth.signInWithEmailAndPassword(
+          email: loginemail, password: loginpassword);
+      if (auth.currentUser!.emailVerified == true) {
+        Get.offAll(() => MainScreen());
+      } else {
+        Get.offAll(() => CreateUserScreen());
+      }
+    } catch (e) {
+      Get.snackbar('Error', '$e', backgroundColor: kwhite);
+    }
+  }
+
+  verifyMail() async {
     await auth.currentUser?.sendEmailVerification();
     Get.snackbar("Success", "Verification sent to use mail");
   }
 
-  signOut()async{
+  signOut() async {
     await auth.signOut();
   }
 
-  addUserDetails(String name,String emaildata)async{
-    final CollectionReference userdata = FirebaseFirestore.instance.collection('userdata');
+  addUserDetails(String name, String emaildata) async {
+    final DocumentReference userdata = FirebaseFirestore.instance
+        .collection('userdata')
+        .doc(auth.currentUser?.uid);
 
-    final data = {
-      'name':name,
-      'email':emaildata,
-    };
+        final data = UserModel(name: name,email: emaildata,id: auth.currentUser?.uid,bio: '',image: '',gender: '').toMap();
+
+    // final data = {
+    //   'name': name,
+    //   'email': emaildata,
+    //   'userid': auth.currentUser?.uid,
+    //   'image': '',
+    //   'bio': '',
+    //   'gender': ''
+    // };
 
     try {
-      await userdata.add(data);
+      await userdata.set(data);
     } catch (e) {
       Get.snackbar("Error", "$e");
     }
-
-    
-
   }
 
-  resetPassword(String resetpassword)async{
+  resetPassword(String resetpassword) async {
     try {
       await auth.sendPasswordResetEmail(email: resetpassword);
       Get.snackbar("Success", 'Reset link sent to your mail');
@@ -81,30 +89,69 @@ class AuthController extends GetxController{
     }
   }
 
-  checkuserstatus()async{
-    final  status = await auth.currentUser;
-    if(status == null){
-      Get.offAll(()=>LoginScreen());
-    }else{
-      Get.offAll(()=>MainScreen());
+  checkuserstatus() async {
+    final userdata = await firebasedb
+        .collection('userdata')
+        .doc(auth.currentUser?.uid)
+        .get();
+    final status = await auth.currentUser;
+
+    if (status == null) {
+      Get.offAll(
+        () => LoginScreen(),
+      );
+    } else if (auth.currentUser?.emailVerified == false) {
+      Get.offAll(
+        () => CreateUserScreen(),
+      );
+    } else if (!userdata.exists) {
+      Get.offAll(
+        () => CreateUserScreen(),
+      );
+    } else {
+      Get.offAll(
+        () => MainScreen(),
+      );
     }
   }
 
-  googleSignIn()async{
+  googleSignIn() async {
     try {
       final GoogleSignInAccount? googlesignin = await google.signIn();
-      if(googlesignin != null){
-        final GoogleSignInAuthentication googlesigninauth = await googlesignin.authentication;
+      if (googlesignin != null) {
+        final GoogleSignInAuthentication googlesigninauth =
+            await googlesignin.authentication;
         final AuthCredential authcredential = GoogleAuthProvider.credential(
-          accessToken: googlesigninauth.accessToken,
-          idToken: googlesigninauth.idToken
-        );
+            accessToken: googlesigninauth.accessToken,
+            idToken: googlesigninauth.idToken);
+
         await auth.signInWithCredential(authcredential);
+        print(auth.signInWithCredential(authcredential));
       }
-      Get.to(()=>CreateUserScreen());
+      final userdata = await FirebaseFirestore.instance
+          .collection('userdata')
+          .doc(auth.currentUser?.uid)
+          .get();
+
+      if (userdata.exists) {
+        print('direct entry');
+        Get.offAll(() => MainScreen());
+      } else {
+        await addUserDetails(auth.currentUser!.displayName.toString(),
+            auth.currentUser!.email.toString());
+        print('No direct entry');
+        Get.offAll(() => MainScreen());
+      }
+      Get.snackbar("Success", 'You are Loging Successfully');
     } catch (e) {
       Get.snackbar("Error", '$e');
     }
-   
+  }
+
+  updateuserdetails(String name, String bio, String gender,String image) async {
+    final CollectionReference user = firebasedb.collection('userdata');
+    // final userdata = UserModel(name: name,bio: bio,gender: gender,image: image).toMap();
+    final data = {'name': name, 'bio': bio, 'gender': gender,'image': image,};
+    user.doc(auth.currentUser?.uid).update(data);
   }
 }
