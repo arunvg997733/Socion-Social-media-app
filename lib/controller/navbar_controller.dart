@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 
-class NavBarController extends GetxController{
+class NavBarController extends GetxController {
   var currentIndex = 0.obs;
 
-  onSelected(int value){
+  onSelected(int value) {
     currentIndex.value = value;
   }
 }

@@ -62,7 +62,14 @@ class AuthController extends GetxController {
         .collection('userdata')
         .doc(auth.currentUser?.uid);
 
-        final data = UserModel(name: name,email: emaildata,id: auth.currentUser?.uid,bio: '',image: '',gender: '').toMap();
+    final data = UserModel(
+            name: name,
+            email: emaildata,
+            id: auth.currentUser?.uid,
+            bio: '',
+            image: '',
+            gender: '')
+        .toMap();
 
     // final data = {
     //   'name': name,
@@ -126,7 +133,7 @@ class AuthController extends GetxController {
             idToken: googlesigninauth.idToken);
 
         await auth.signInWithCredential(authcredential);
-        print(auth.signInWithCredential(authcredential));
+
       }
       final userdata = await FirebaseFirestore.instance
           .collection('userdata')
@@ -134,12 +141,10 @@ class AuthController extends GetxController {
           .get();
 
       if (userdata.exists) {
-        print('direct entry');
         Get.offAll(() => MainScreen());
       } else {
         await addUserDetails(auth.currentUser!.displayName.toString(),
             auth.currentUser!.email.toString());
-        print('No direct entry');
         Get.offAll(() => MainScreen());
       }
       Get.snackbar("Success", 'You are Loging Successfully');
@@ -148,10 +153,16 @@ class AuthController extends GetxController {
     }
   }
 
-  updateuserdetails(String name, String bio, String gender,String image) async {
+  updateuserdetails(
+      String name, String bio, String gender, String image) async {
     final CollectionReference user = firebasedb.collection('userdata');
     // final userdata = UserModel(name: name,bio: bio,gender: gender,image: image).toMap();
-    final data = {'name': name, 'bio': bio, 'gender': gender,'image': image,};
+    final data = {
+      'name': name,
+      'bio': bio,
+      'gender': gender,
+      'image': image,
+    };
     user.doc(auth.currentUser?.uid).update(data);
   }
 }

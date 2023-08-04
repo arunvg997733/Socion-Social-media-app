@@ -7,9 +7,9 @@ import 'package:socion/controller/authcontroller.dart';
 import 'package:socion/controller/navbar_controller.dart';
 import 'package:socion/controller/profile_pic_contoller.dart';
 import 'package:socion/core/constant.dart';
-import 'package:socion/view/main_screen/screen_main.dart';
 import 'package:socion/view/widget/widget.dart';
 
+// ignore: must_be_immutable
 class ProfileEditScreen extends StatelessWidget {
   ProfileEditScreen(
       {super.key,
@@ -21,11 +21,11 @@ class ProfileEditScreen extends StatelessWidget {
   String bio;
   String gender;
   String image;
-  FirebaseAuth auth = FirebaseAuth.instance;
-  String? username;
-  TextEditingController namectr = TextEditingController();
-  TextEditingController bioctr = TextEditingController();
-  List<String> genderlist = ['Male', 'Female'];
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  // String? username;
+  final TextEditingController namectr = TextEditingController();
+  final TextEditingController bioctr = TextEditingController();
+  final List<String> genderlist = ['Male', 'Female'];
 
   final getctr = Get.put(AuthController());
   final getnav = Get.put(NavBarController());
@@ -33,6 +33,7 @@ class ProfileEditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getimg.image.value = '';
     namectr.text = name;
     bioctr.text = bio;
     return Scaffold(
@@ -94,7 +95,6 @@ class ProfileEditScreen extends StatelessWidget {
                                               ),
                                               InkWell(
                                                 onTap: () async {
-                                                  stdout.write('arun');
                                                   await getimg
                                                       .pickCameraImage();
                                                   Get.back();
@@ -128,7 +128,11 @@ class ProfileEditScreen extends StatelessWidget {
                 TextFieldWidget(
                     controller: namectr, hint: 'Name', wordlenth: 20),
                 kheight10,
-                TextFieldWidget(controller: bioctr, hint: 'Bio', wordlenth: 55),
+                TextFieldWidget(
+                    controller: bioctr,
+                    hint: 'Bio',
+                    wordlenth: 55,
+                    linenumber: 3),
                 kheight10,
                 DropdownButtonFormField(
                   value: gender == '' ? null : gender,
@@ -182,17 +186,14 @@ class ProfileEditScreen extends StatelessWidget {
                             TaskSnapshot snapshot = await uploadTask;
                             image = await snapshot.ref.getDownloadURL();
                             //  image = await referenceImageToUpload.getDownloadURL();
-                            print('image = $image');
-                          } catch (e) {
-                            print('print error = $e');
-                          }
+                          } catch (e) {}
                           getctr.updateuserdetails(
                             namectr.text,
                             bioctr.text,
                             gender,
                             image,
                           );
-                          Get.offAll(() => MainScreen());
+                          Get.back();
                         },
                         child: Center(child: textStyle('Update', 14)),
                       ),

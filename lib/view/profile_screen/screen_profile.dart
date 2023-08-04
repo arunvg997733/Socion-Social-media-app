@@ -2,29 +2,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:socion/controller/post_controller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/model/post_model.dart';
 import 'package:socion/view/login_screen/screen_login.dart';
 import 'package:socion/view/profile_edit_screen/screen_profile_edit.dart';
+import 'package:socion/view/profile_image_view_screen/screen_profile_image_view.dart';
 import 'package:socion/view/widget/widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
+  final getpost = Get.put(PostController());
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference user =
       FirebaseFirestore.instance.collection('userdata');
   @override
   Widget build(BuildContext context) {
+    getpost.postcount();
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Padding(
           padding: const EdgeInsets.all(5.0),
           child: StreamBuilder(
             stream: user.doc(auth.currentUser?.uid).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               return SingleChildScrollView(
@@ -42,13 +47,16 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     kheight30,
-                     CircleAvatar(
+                    CircleAvatar(
                         radius: 70,
-                        backgroundImage: snapshot.data!['image']==''?AssetImage('assets/user.jpg') as ImageProvider: NetworkImage(snapshot.data!['image'])),
+                        backgroundImage: snapshot.data!['image'] == ''
+                            ? const AssetImage('assets/user.jpg')
+                                as ImageProvider
+                            : NetworkImage(snapshot.data!['image'])),
                     kheight30,
                     textStyle(snapshot.data!['name'], 20),
                     kheight10,
-                    Container(
+                    SizedBox(
                       width: 150,
                       child:
                           Center(child: textStyle(snapshot.data!['bio'], 14)),
@@ -87,11 +95,7 @@ class ProfileScreen extends StatelessWidget {
                                 Color(0xffDE3377),
                               ])),
                           child: TextButton(
-                            onPressed: () async {
-                              GoogleSignIn google = GoogleSignIn();
-                              final GoogleSignInAccount? googlesignin =
-                                  await google.signIn();
-                            },
+                            onPressed: () async {},
                             child: Center(
                                 child: iconStyle(Icons.group_add_outlined)),
                           ),
@@ -105,7 +109,8 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(
                           child: Column(
                             children: [
-                              textStyle('20', 20),
+                              Obx(() => textStyle(
+                                  getpost.userpostcount.toString(), 20)),
                               textStyle('Post', 15),
                             ],
                           ),
@@ -129,28 +134,63 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     kheight30,
-                    GridView.count(
-                      crossAxisCount: 3,
-                      childAspectRatio: 1,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 2,
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      children: List.generate(
-                        10,
-                        (index) {
-                          return Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/car.jpeg'),
-                                  fit: BoxFit.cover),
+                    //Userpost
+                    StreamBuilder(
+                        stream: getpost.alluserpostdata.snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return textStyle('Error - ${snapshot.error}', 12);
+                          } else if (snapshot.data!.docs.isEmpty) {
+                            return SizedBox(
+                                height: 100,
+                                child: Center(child: textStyle('No Post', 20)));
+                          }
+
+                          List<PostModel> newlist = [];
+                          for (var element in snapshot.data!.docs.toList()) {
+                            if (element['userid'] ==
+                                getpost.auth.currentUser?.uid) {
+                              final data = PostModel.fromMap(element);
+                              newlist.add(data);
+                            }
+                          }
+                          return GridView.count(
+                            crossAxisCount: 3,
+                            childAspectRatio: 1,
+                            crossAxisSpacing: 2,
+                            mainAxisSpacing: 2,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: List.generate(
+                              newlist.length,
+                              (index) {
+                                final data = newlist[index];
+                                // final data = snapshot.data!.docs[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(() => ProfileImageViewScreen());
+                                  },
+                                  child: data.image != null
+                                      ? Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                                image:
+                                                    NetworkImage(data.image!),
+                                                fit: BoxFit.cover),
+                                          ),
+                                        )
+                                      : const CircularProgressIndicator(),
+                                );
+                              },
                             ),
                           );
-                        },
-                      ),
-                    )
+                        }),
+                    kheight30
                   ],
                 ),
               );

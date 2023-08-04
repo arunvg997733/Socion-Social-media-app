@@ -1,10 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:socion/controller/post_controller.dart';
 import 'package:socion/core/constant.dart';
 
-Icon iconStyle(IconData icon) {
+Icon iconStyle(IconData icon, [double? size]) {
   return Icon(
     icon,
     color: kwhite,
+    size: size,
+  );
+}
+
+showSnacksBar(
+  String title,
+  String message,
+) {
+  Get.snackbar(title, message, backgroundColor: kwhite);
+}
+
+Widget divider() {
+  return const Divider(
+    color: kwhite,
+    thickness: 0.2,
   );
 }
 
@@ -20,27 +38,30 @@ Widget textStyle(String text, double size) {
 }
 
 class TextFieldWidget extends StatelessWidget {
-  TextFieldWidget(
+  const TextFieldWidget(
       {super.key,
       required this.controller,
       required this.hint,
-      this.wordlenth});
+      this.wordlenth,
+      this.linenumber});
 
   final TextEditingController controller;
   final String? hint;
   final int? wordlenth;
+  final int? linenumber;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      style: TextStyle(color: kwhite),
+      maxLines: linenumber,
+      style: const TextStyle(color: kwhite),
       controller: controller,
       maxLength: wordlenth,
       decoration: InputDecoration(
-          counterStyle: TextStyle(color: kwhite),
+          counterStyle: const TextStyle(color: kwhite),
           label: Text(
             hint!,
-            style: TextStyle(color: kwhite),
+            style: const TextStyle(color: kwhite),
           ),
           fillColor: kdarkgrey,
           filled: true,
@@ -63,12 +84,12 @@ class HideTextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       obscureText: true,
-      style: TextStyle(color: kwhite),
+      style: const TextStyle(color: kwhite),
       controller: controller,
       decoration: InputDecoration(
         label: Text(
           hint!,
-          style: TextStyle(color: kwhite),
+          style: const TextStyle(color: kwhite),
         ),
         fillColor: kdarkgrey,
         filled: true,
@@ -78,4 +99,126 @@ class HideTextFieldWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class UserDetails extends StatelessWidget {
+  const UserDetails({
+    super.key,
+    required this.stream,
+  });
+
+  final Stream<DocumentSnapshot<Object?>> stream;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+        stream: stream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                        image: NetworkImage(snapshot.data!['image']),
+                        fit: BoxFit.cover),
+                  ),
+                ),
+                kwidth10,
+                textStyle(snapshot.data!['name'], 12)
+              ],
+            ),
+          );
+        });
+  }
+}
+
+PersistentBottomSheetController<dynamic> showComment(
+    BuildContext context, String data) {
+  final getpost = Get.put(PostController());
+  return showBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: context,
+    builder: (context) {
+      TextEditingController commentctr = TextEditingController();
+      return StreamBuilder(
+          stream: getpost.alluserpostdata
+              .doc(data)
+              .collection('comment')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              child: Container(
+                color: kdarkgrey,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      kheight30,
+                      textStyle('Comments', 20),
+                      divider(),
+                      Expanded(
+                          child: snapshot.data!.docs.isEmpty
+                              ? Center(child: textStyle('No comments', 15))
+                              : ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    final commentdata =
+                                        snapshot.data!.docs[index];
+                                    return Row(
+                                      children: [
+                                        UserDetails(
+                                          stream: getpost.userdata
+                                              .doc(commentdata["userid"])
+                                              .snapshots(),
+                                        ),
+                                        kwidth10,
+                                        textStyle(commentdata['comment'], 15)
+                                      ],
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return divider();
+                                  },
+                                  itemCount: snapshot.data!.docs.length)),
+                      kheight10,
+                      TextFieldWidget(controller: commentctr, hint: 'Comment'),
+                      kheight10,
+                      Container(
+                        width: 100,
+                        height: 35,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            gradient: const LinearGradient(colors: [
+                              Color(0xffF65F53),
+                              Color(0xffDE3377),
+                            ])),
+                        child: TextButton(
+                          onPressed: () async {
+                            getpost.comment(commentctr.text, data);
+                            Get.back();
+                          },
+                          child: Center(child: textStyle('Post', 14)),
+                        ),
+                      ),
+                      kheight10,
+                    ],
+                  ),
+                ),
+              ),
+            );
+          });
+    },
+  );
 }
