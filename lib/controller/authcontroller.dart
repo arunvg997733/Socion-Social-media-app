@@ -13,6 +13,8 @@ class AuthController extends GetxController {
   GoogleSignIn google = GoogleSignIn();
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firebasedb = FirebaseFirestore.instance;
+  final CollectionReference user =
+      FirebaseFirestore.instance.collection('userdata');
   var verify = false.obs;
 
   changeuserstatus() {

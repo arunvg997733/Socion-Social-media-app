@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:socion/controller/navbar_controller.dart';
 import 'package:socion/controller/post_controller.dart';
+import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/Like_screen/screen_like.dart';
+import 'package:socion/view/user_profile_screen/screen_user_profile.dart';
 import 'package:socion/view/view_image/screen_view-image.dart';
 import 'package:socion/view/widget/widget.dart';
 
@@ -15,7 +19,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final getpost = Get.put(PostController());
-
+  final getOther = Get.put(UserProfileController());
+  final getnav = Get.put(NavBarController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,23 +61,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemBuilder: (context, index) {
                             final data = snapshot.data!.docs[index];
                             const colorlist = Colors.accents;
-                            return Column(
-                              children: [
-                                Container(
-                                  height: 70,
-                                  width: 70,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: colorlist[index], width: 3),
-                                    borderRadius: BorderRadius.circular(15),
-                                    image: DecorationImage(
-                                        image: NetworkImage(data['image']),
-                                        fit: BoxFit.cover),
+                            return InkWell(
+                              onTap: () {
+                                Get.to(UserProfileScreen(userId: data['userid']));
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 70,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: colorlist[index], width: 3),
+                                      borderRadius: BorderRadius.circular(15),
+                                      image: DecorationImage(
+                                          image: NetworkImage(data['image']),
+                                          fit: BoxFit.cover),
+                                    ),
                                   ),
-                                ),
-                                kheight5,
-                                textStyle(data['name'], 10)
-                              ],
+                                  kheight5,
+                                  textStyle(data['name'], 10)
+                                ],
+                              ),
                             );
                           },
                         );
@@ -80,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 //post//
                 StreamBuilder(
-                    stream: getpost.alluserpostdata.snapshots(),
+                    stream: FirebaseFirestore.instance.collectionGroup('singleuserpost').snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return const Center(child: CircularProgressIndicator());
@@ -90,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           snapshot.data!.docs.length,
                           (index) {
                             final data = snapshot.data!.docs[index];
-                            getpost.getLikecount(data.id);
+                            // getpost.getLikecount(data.id,index);
+
                             String time =
                                 getpost.formatTimeAgo(data['time'].toDate());
                             return Column(
@@ -99,10 +110,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: double.infinity,
                                   child: Column(
                                     children: [
-                                      UserDetails(
-                                        stream: getpost.userdata
-                                            .doc(data['userid'])
-                                            .snapshots(),
+                                      GestureDetector(
+                                        onTap: (){
+                                          if(data['userid']== getOther.auth.currentUser?.uid){
+                                            getnav.onSelected(4);
+                                          }else{
+                                            Get.to(UserProfileScreen(userId: data['userid'],));
+                                            print('arun start');
+                                            print(data['userid']);
+                                          }
+                                        },
+                                        child: UserDetails(
+                                          stream: getpost.userdata
+                                              .doc(data['userid'])
+                                              .snapshots(),
+                                        ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -172,7 +194,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     postId: data.id,
                                                   ));
                                             },
-                                            child: StreamBuilder(
+                                            // child: Obx(() => textStyle('Likes ${getpost.countlist[index]}', 12))
+                                           child: StreamBuilder(
                                                 stream: getpost.alluserpostdata
                                                     .doc(data.id)
                                                     .collection('like')
@@ -229,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           false) {
                                                         setState(() {
                                                           getpost.like(data.id);
+                                                          // getpost.getLikecount(data.id);
                                                         });
                                                       } else {
                                                         setState(() {

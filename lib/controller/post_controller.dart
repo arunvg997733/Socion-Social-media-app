@@ -9,17 +9,21 @@ class PostController extends GetxController {
   RxInt userpostcount = 0.obs;
   RxBool userlike = false.obs;
   RxInt likeCount = 0.obs;
+  // RxList countlist = [].obs;
 
   FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference userdata =
       FirebaseFirestore.instance.collection('userdata');
   CollectionReference alluserpostdata =
       FirebaseFirestore.instance.collection('allpostdata');
+  CollectionReference postData =
+      FirebaseFirestore.instance.collection('postdata');
 
   // adding post in user profile//
 
   addPostToUser(String user, String userid, String discription, String image,
       String location, DateTime time) async {
+        final postpath = postData.doc(auth.currentUser?.uid).collection('singleuserpost');
     final newpost = PostModel(
             user: user,
             userid: userid,
@@ -28,11 +32,15 @@ class PostController extends GetxController {
             location: location,
             time: time)
         .toMap();
-    alluserpostdata.add(newpost);
+        postpath.add(newpost);
+    // alluserpostdata.add(newpost);
   }
 
   deletePost(String postid) {
-    alluserpostdata.doc(postid).delete();
+    postData.doc(auth.currentUser?.uid).collection('singleuserpost').doc(postid).delete();
+    // alluserpostdata.doc(postid).delete();
+    Get.back();
+    Get.back();
   }
 
   String formatTimeAgo(DateTime timestamp) {
@@ -40,7 +48,7 @@ class PostController extends GetxController {
   }
 
   postcount() async {
-    final data = await alluserpostdata.get();
+    final data = await postData.doc(auth.currentUser?.uid).collection('singleuserpost').get();
     List<PostModel> newlist = [];
     for (var element in data.docs.toList()) {
       if (element['userid'] == auth.currentUser?.uid) {
@@ -65,15 +73,21 @@ class PostController extends GetxController {
     }
   }
 
-  getLikecount(String postid) async {
-    final postdata = await alluserpostdata.doc(postid).collection('like').get();
-    int count = 0;
-    // ignore: unused_local_variable
-    for (var element in postdata.docs.toList()) {
-      count++;
-    }
-    likeCount.value = count;
-  }
+  // getLikecount(String postid,int index) async {
+  //   final postdata = await alluserpostdata.doc(postid).collection('like').get();
+  //   // int count = 0;
+  //   // ignore: unused_local_variable
+  //   countlist.add(postdata.docs.length);
+  //   // countlist[index] = postdata.docs.length;
+
+    
+
+    
+  //   // for (var element in postdata.docs.toList()) {
+  //   //   count++;
+  //   // }
+  //   // likeCount.value = count;
+  // }
 
   dislike(String postid) {
     try {
@@ -106,4 +120,19 @@ class PostController extends GetxController {
     final newcomment = {'userid': auth.currentUser?.uid, 'comment': text};
     data.add(newcomment);
   }
+
+  getlength()async{
+  final data =await alluserpostdata.get();
+
+  data.docs.length;
+  print(data.docs.length);
 }
+
+
+
+}
+
+
+
+
+

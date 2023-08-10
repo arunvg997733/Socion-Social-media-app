@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/post_controller.dart';
+import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
-import 'package:socion/model/post_model.dart';
 import 'package:socion/view/login_screen/screen_login.dart';
 import 'package:socion/view/profile_edit_screen/screen_profile_edit.dart';
 import 'package:socion/view/profile_image_view_screen/screen_profile_image_view.dart';
@@ -13,12 +13,15 @@ import 'package:socion/view/widget/widget.dart';
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final getpost = Get.put(PostController());
+  final getOther = Get.put(UserProfileController());
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference user =
       FirebaseFirestore.instance.collection('userdata');
   @override
   Widget build(BuildContext context) {
+    getOther.getCurrentUserFollower();
+    getOther.getCurrentUserFollowing();
     getpost.postcount();
     return Scaffold(
       body: SafeArea(
@@ -95,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
                                 Color(0xffDE3377),
                               ])),
                           child: TextButton(
-                            onPressed: () async {},
+                            onPressed: () async {getpost.getlength();},
                             child: Center(
                                 child: iconStyle(Icons.group_add_outlined)),
                           ),
@@ -118,7 +121,7 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(
                           child: Column(
                             children: [
-                              textStyle('486', 20),
+                              Obx(() => textStyle(getOther.followercount.toString(), 20),),
                               textStyle('Followers', 15),
                             ],
                           ),
@@ -126,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(
                           child: Column(
                             children: [
-                              textStyle('380', 20),
+                              Obx(() => textStyle(getOther.followingCount.toString(), 20),),
                               textStyle('Following', 15),
                             ],
                           ),
@@ -136,7 +139,7 @@ class ProfileScreen extends StatelessWidget {
                     kheight30,
                     //Userpost
                     StreamBuilder(
-                        stream: getpost.alluserpostdata.snapshots(),
+                        stream: getpost.postData.doc(auth.currentUser?.uid).collection('singleuserpost').orderBy('time').snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -149,14 +152,14 @@ class ProfileScreen extends StatelessWidget {
                                 child: Center(child: textStyle('No Post', 20)));
                           }
 
-                          List<PostModel> newlist = [];
-                          for (var element in snapshot.data!.docs.toList()) {
-                            if (element['userid'] ==
-                                getpost.auth.currentUser?.uid) {
-                              final data = PostModel.fromMap(element);
-                              newlist.add(data);
-                            }
-                          }
+                          // List<PostModel> newlist = [];
+                          // for (var element in snapshot.data!.docs.toList()) {
+                          //   if (element['userid'] ==
+                          //       getpost.auth.currentUser?.uid) {
+                          //     final data = PostModel.fromMap(element);
+                          //     newlist.add(data);
+                          //   }
+                          // }
                           return GridView.count(
                             crossAxisCount: 3,
                             childAspectRatio: 1,
@@ -165,22 +168,22 @@ class ProfileScreen extends StatelessWidget {
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             children: List.generate(
-                              newlist.length,
+                              snapshot.data!.docs.length,
                               (index) {
-                                final data = newlist[index];
-                                // final data = snapshot.data!.docs[index];
+                                // final data = newlist[index];
+                                final data = snapshot.data!.docs[index];
                                 return InkWell(
                                   onTap: () {
-                                    Get.to(() => ProfileImageViewScreen());
+                                    // Get.to(() => ProfileImageViewScreen());
                                   },
-                                  child: data.image != null
+                                  child: data['image'] != null
                                       ? Container(
                                           width: 40,
                                           height: 40,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                                 image:
-                                                    NetworkImage(data.image!),
+                                                    NetworkImage(data['image']),
                                                 fit: BoxFit.cover),
                                           ),
                                         )
