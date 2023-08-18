@@ -21,14 +21,14 @@ class ProfilePickController extends GetxController {
     }
   }
 
-  Future<String> uploadimage(String image) async {
+  Future<String> uploadimage() async {
     String imagelink = '';
     String uniquno = DateTime.now().millisecondsSinceEpoch.toString();
     Reference referenceRoot = FirebaseStorage.instance.ref();
     Reference referenceDirImage = referenceRoot.child('userdata');
     Reference referenceImageToUpload = referenceDirImage.child(uniquno);
     try {
-      UploadTask uploadTask = referenceImageToUpload.putFile(File(image));
+      UploadTask uploadTask = referenceImageToUpload.putFile(File(image.value));
       TaskSnapshot snapshot = await uploadTask;
       imagelink = await snapshot.ref.getDownloadURL();
     } catch (e) {

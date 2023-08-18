@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/view/follw_screen/screen_follow.dart';
 import 'package:socion/view/login_screen/screen_login.dart';
 import 'package:socion/view/profile_edit_screen/screen_profile_edit.dart';
-import 'package:socion/view/profile_image_view_screen/screen_profile_image_view.dart';
+import 'package:socion/view/current_user_post_view_screen/screen_current_user_post_view.dart';
 import 'package:socion/view/widget/widget.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -20,8 +21,8 @@ class ProfileScreen extends StatelessWidget {
       FirebaseFirestore.instance.collection('userdata');
   @override
   Widget build(BuildContext context) {
-    getOther.getCurrentUserFollower();
-    getOther.getCurrentUserFollowing();
+    getOther.getCurrentUserFollowerCount();
+    getOther.getCurrentUserFollowingCount();
     getpost.postcount();
     return Scaffold(
       body: SafeArea(
@@ -119,19 +120,32 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          child: Column(
-                            children: [
-                              Obx(() => textStyle(getOther.followercount.toString(), 20),),
-                              textStyle('Followers', 15),
-                            ],
+                          child: InkWell(
+                            onTap: () {
+                              getOther.getfollowerList(getOther.auth.currentUser!.uid);
+                            Get.to(FollowScreen(text: 'Follower', newlist: getOther.followinglist));
+                              
+                            },
+                            child: Column(
+                              children: [
+                                Obx(() => textStyle(getOther.followercount.toString(), 20),),
+                                textStyle('Followers', 15),
+                              ],
+                            ),
                           ),
                         ),
                         Expanded(
-                          child: Column(
-                            children: [
-                              Obx(() => textStyle(getOther.followingCount.toString(), 20),),
-                              textStyle('Following', 15),
-                            ],
+                          child: InkWell(
+                            onTap: () {
+                            getOther.getfollowingList(getOther.auth.currentUser!.uid);
+                            Get.to(FollowScreen(text: 'Following', newlist: getOther.followinglist));
+                          },
+                            child: Column(
+                              children: [
+                                Obx(() => textStyle(getOther.followingCount.toString(), 20),),
+                                textStyle('Following', 15),
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -174,7 +188,8 @@ class ProfileScreen extends StatelessWidget {
                                 final data = snapshot.data!.docs[index];
                                 return InkWell(
                                   onTap: () {
-                                    // Get.to(() => ProfileImageViewScreen());
+                                    print(index);
+                                    Get.to(() => CurrentUserPostViewScreen(index: index,userId: getpost.auth.currentUser?.uid,));
                                   },
                                   child: data['image'] != null
                                       ? Container(

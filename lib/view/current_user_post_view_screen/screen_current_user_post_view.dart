@@ -3,11 +3,13 @@ import 'package:get/get.dart';
 import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/view/post_edit_screen/screen%20_post_edit.dart';
 import 'package:socion/view/widget/widget.dart';
 import 'package:photo_view/photo_view.dart';
 
-class ProfileImageViewScreen extends StatelessWidget {
-  ProfileImageViewScreen({super.key,this.userId});
+class CurrentUserPostViewScreen extends StatelessWidget {
+  CurrentUserPostViewScreen({super.key,this.index,this.userId});
+  int? index;
   String? userId;
   final getOther = Get.put(UserProfileController());
   final getpost = Get.put(PostController());
@@ -17,11 +19,15 @@ class ProfileImageViewScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: StreamBuilder(
-          stream: getpost.postData.doc(userId).collection('singleuserpost').snapshots(),
+          stream: getpost.postData.doc(userId).collection('singleuserpost').orderBy('time').snapshots(),
           builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return Center(child: CircularProgressIndicator());
+            }
             return PageView.builder(
               scrollDirection: Axis.vertical,
-              itemCount: getOther.postlist.length,
+              controller: PageController(initialPage: index!),
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (
                 context,
                 index,
@@ -45,7 +51,7 @@ class ProfileImageViewScreen extends StatelessWidget {
                                 backgroundColor: kdarkgrey,
                                 context: context,
                                 builder: (context) {
-                                  return Padding(
+                                  return userId == getpost.auth.currentUser?.uid ? Padding(
                                     padding: const EdgeInsets.all(15.0),
                                     child: Column(
                                       crossAxisAlignment:
@@ -57,10 +63,16 @@ class ProfileImageViewScreen extends StatelessWidget {
                                               getpost.postcount();
                                             },
                                             child:
-                                                textStyle('Delete post', 20))
+                                                textStyle('Delete post', 20)),
+                                        TextButton(
+                                            onPressed: () {
+                                              Get.to(PostEditScreen(image: data['image'],discription: data['discription'],location: data['location'],postId: data.id,));
+                                            },
+                                            child:
+                                                textStyle('Edit post', 20))
                                       ],
                                     ),
-                                  );
+                                  ): Center(child: textStyle(' need to complete', 15));
                                 },
                               );
                             },
@@ -110,6 +122,7 @@ class ProfileImageViewScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                  
                   ],
                 );
               },

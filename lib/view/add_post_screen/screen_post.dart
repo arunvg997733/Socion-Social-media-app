@@ -140,11 +140,11 @@ class PostScreen extends StatelessWidget {
                           try {
                             DateTime time = DateTime.now();
                             String image =
-                                await getimg.uploadimage(getimg.image.value);
+                                await getimg.uploadimage();
                             final userdata = await getpost.userdata
                                 .doc(getpost.auth.currentUser?.uid)
                                 .get();
-                            getpost.addPostToUser(
+                            getpost.addPost(
                                 userdata['name'],
                                 getpost.auth.currentUser!.uid,
                                 discriptionctr.text,

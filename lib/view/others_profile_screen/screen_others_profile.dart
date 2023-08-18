@@ -5,6 +5,7 @@ import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/current_user_post_view_screen/screen_current_user_post_view.dart';
+import 'package:socion/view/follw_screen/screen_follow.dart';
 import 'package:socion/view/widget/widget.dart';
 
 class OtherProfileScreen extends StatelessWidget {
@@ -130,20 +131,32 @@ class OtherProfileScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: Column(
-                          children: [
-                            Obx(() => textStyle(
-                                getOther.followercount.toString(), 20)),
-                            textStyle('Followers', 15),
-                          ],
+                        child: InkWell(
+                          onTap: () {
+                            getOther.getfollowerList(userId);
+                            Get.to(FollowScreen(text: 'Followers', newlist: getOther.followinglist));
+                          },
+                          child: Column(
+                            children: [
+                              Obx(() => textStyle(
+                                  getOther.followercount.toString(), 20)),
+                              textStyle('Followers', 15),
+                            ],
+                          ),
                         ),
                       ),
                       Expanded(
-                        child: Column(
-                          children: [
-                            Obx(() => textStyle(getOther.followingCount.toString(), 20),),
-                            textStyle('Following', 15),
-                          ],
+                        child: InkWell(
+                          onTap: () {
+                            getOther.getfollowingList(userId);
+                            Get.to(FollowScreen(text: 'Following', newlist: getOther.followinglist));
+                          },
+                          child: Column(
+                            children: [
+                              Obx(() => textStyle(getOther.followingCount.toString(), 20),),
+                              textStyle('Following', 15),
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -163,7 +176,7 @@ class OtherProfileScreen extends StatelessWidget {
                         final data = getOther.postlist[index];
                         return InkWell(
                           onTap: () {
-                            Get.to(() => CurrentUserPostViewScreen());
+                            Get.to(() => CurrentUserPostViewScreen(index: index,userId:userId,));
                           },
                           child:data.image != null ? Container(
                                   width: 40,

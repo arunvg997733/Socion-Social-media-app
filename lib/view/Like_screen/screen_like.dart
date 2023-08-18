@@ -16,7 +16,7 @@ class LikeScreen extends StatelessWidget {
         backgroundColor: kblack,
       ),
       body: StreamBuilder(
-          stream: getpost.alluserpostdata
+          stream: getpost.likeandcommentdata
               .doc(postId)
               .collection('like')
               .snapshots(),

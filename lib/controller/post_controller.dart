@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:socion/model/post_model.dart';
+import 'package:socion/view/main_screen/screen_main.dart';
 import 'package:socion/view/widget/widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -14,14 +15,14 @@ class PostController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference userdata =
       FirebaseFirestore.instance.collection('userdata');
-  CollectionReference alluserpostdata =
-      FirebaseFirestore.instance.collection('allpostdata');
+  CollectionReference likeandcommentdata =
+      FirebaseFirestore.instance.collection('likeandcommant');
   CollectionReference postData =
       FirebaseFirestore.instance.collection('postdata');
 
   // adding post in user profile//
 
-  addPostToUser(String user, String userid, String discription, String image,
+  addPost(String user, String userid, String discription, String image,
       String location, DateTime time) async {
         final postpath = postData.doc(auth.currentUser?.uid).collection('singleuserpost');
     final newpost = PostModel(
@@ -33,14 +34,29 @@ class PostController extends GetxController {
             time: time)
         .toMap();
         postpath.add(newpost);
-    // alluserpostdata.add(newpost);
   }
 
   deletePost(String postid) {
     postData.doc(auth.currentUser?.uid).collection('singleuserpost').doc(postid).delete();
-    // alluserpostdata.doc(postid).delete();
     Get.back();
     Get.back();
+  }
+
+  editPost(String postid,String discription,String location)async{
+    DateTime time = DateTime.now();
+    final data = {
+      'discription':discription,
+      'location':location,
+      'time':time
+    };
+    try {
+      postData.doc(auth.currentUser?.uid).collection('singleuserpost').doc(postid).update(data);
+      showSnacksBar('Success','Post Updated');
+    } catch (e) {
+      showSnacksBar('Error', e.toString());
+    }
+    Get.offAll(MainScreen());
+
   }
 
   String formatTimeAgo(DateTime timestamp) {
@@ -62,12 +78,11 @@ class PostController extends GetxController {
 
   like(String postid) {
     try {
-      final postdata = alluserpostdata
+      final lcdata = likeandcommentdata
           .doc(postid)
-          .collection('like')
-          .doc(auth.currentUser?.uid);
+          .collection('like').doc(auth.currentUser?.uid);
       final data = {'userid': auth.currentUser?.uid};
-      postdata.set(data);
+      lcdata.set(data);
     } catch (e) {
       showSnacksBar('Error', e.toString());
     }
@@ -91,7 +106,8 @@ class PostController extends GetxController {
 
   dislike(String postid) {
     try {
-      final postdata = alluserpostdata.doc(postid).collection('like');
+      
+      final postdata = postData.doc(postid).collection('like');
 
       postdata.doc(auth.currentUser?.uid).delete();
     } catch (e) {
@@ -101,7 +117,7 @@ class PostController extends GetxController {
 
   Future<bool> checklike(String postid) async {
     try {
-      final data = await alluserpostdata
+      final data = await likeandcommentdata
           .doc(postid)
           .collection('like')
           .doc(auth.currentUser?.uid)
@@ -116,13 +132,13 @@ class PostController extends GetxController {
   }
 
   comment(String text, String postId) {
-    final data = alluserpostdata.doc(postId).collection('comment');
+    final data = likeandcommentdata.doc(postId).collection('comment');
     final newcomment = {'userid': auth.currentUser?.uid, 'comment': text};
     data.add(newcomment);
   }
 
   getlength()async{
-  final data =await alluserpostdata.get();
+  final data =await likeandcommentdata.get();
 
   data.docs.length;
   print(data.docs.length);

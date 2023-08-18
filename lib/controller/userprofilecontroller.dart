@@ -17,6 +17,7 @@ class UserProfileController extends GetxController{
   var user = UserModel(name: '',image: '',bio: '',email: '',gender: '',id: '').obs;
   // List<PostModel> postlist = [];
   RxList postlist = <PostModel>[].obs;
+  RxList followinglist = [].obs;
 
 
 
@@ -83,7 +84,7 @@ class UserProfileController extends GetxController{
   
 
   }
-// for getting other user post data count //
+//--------------- for getting other user post data count -------------//
   getPostCount(String userId)async{
     final data = await postdata.doc(userId).collection('singleuserpost').get();
     postcount.value = data.docs.length;
@@ -91,15 +92,53 @@ class UserProfileController extends GetxController{
 
   // current user // 
 
-  getCurrentUserFollower()async{
+  getCurrentUserFollowerCount()async{
     final data =await followdata.doc(auth.currentUser?.uid).collection('follower').get();
     followercount.value = data.docs.length;
   }
 
-  getCurrentUserFollowing()async{
+  getCurrentUserFollowingCount()async{
     final data =await followdata.doc(auth.currentUser?.uid).collection('following').get();
     followingCount.value = data.docs.length;
   }
+
+  Future <String> getProfileImageUser(userId)async{
+    final data = await userdata.doc(userId).get();
+    return data['image'];
+  }
+
+  getfollowingList(String userId)async{
+    followinglist.value.clear();
+    final followingdata =await followdata.doc(userId).collection('following').get();
+    List follolist = followingdata.docs;
+
+    for(var element in follolist ){
+      final data =await getimage(element['userid']);
+      followinglist.value.add(data);
+    }
+    update();
+
+  }
+
+  getfollowerList(String userId)async{
+    followinglist.value.clear();
+    final followingdata =await followdata.doc(userId).collection('follower').get();
+    List follolist = followingdata.docs;
+
+    for(var element in follolist ){
+      final data =await getimage(element['userid']);
+      followinglist.value.add(data);
+    }
+    update();
+
+  }
+
+
+  Future <DocumentSnapshot<Map<String, dynamic>>> getimage(String userid)async{
+    final data = await userdata.doc(userid).get();
+    return data;
+  } 
+
 
 
 }

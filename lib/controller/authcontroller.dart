@@ -103,7 +103,7 @@ class AuthController extends GetxController {
         .collection('userdata')
         .doc(auth.currentUser?.uid)
         .get();
-    final status = await auth.currentUser;
+    final status = auth.currentUser;
 
     if (status == null) {
       Get.offAll(

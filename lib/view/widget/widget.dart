@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/post_controller.dart';
+import 'package:socion/controller/profile_pic_contoller.dart';
 import 'package:socion/core/constant.dart';
 
 Icon iconStyle(IconData icon, [double? size]) {
@@ -149,12 +152,12 @@ PersistentBottomSheetController<dynamic> showComment(
     builder: (context) {
       TextEditingController commentctr = TextEditingController();
       return StreamBuilder(
-          stream: getpost.alluserpostdata
+          stream: getpost.likeandcommentdata
               .doc(data)
               .collection('comment')
               .snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
             return ClipRRect(
@@ -221,4 +224,104 @@ PersistentBottomSheetController<dynamic> showComment(
           });
     },
   );
+}
+
+class ImagePicker extends StatelessWidget {
+   ImagePicker({
+    super.key,
+    required this.heigth
+  });
+
+  double heigth;
+
+  final getImg = Get.put(ProfilePickController());
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: kdarkgrey,
+                        actions: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 40),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                              children: [
+                                InkWell(
+                                  onTap: () async {
+                                    await getImg.pickGalleryImage();
+                                    Get.back();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Image.asset(
+                                        'assets/gallery.png',
+                                        height: 50,
+                                      ),
+                                      kheight10,
+                                      textStyle('Gallery', 12)
+                                    ],
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    await getImg.pickCameraImage();
+                                    Get.back();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Image.asset(
+                                        'assets/camera.png',
+                                        height: 50,
+                                      ),
+                                      kheight10,
+                                      textStyle('Camera', 12)
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Obx(
+                  () => Container(
+                      width: double.infinity,
+                      height: heigth,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kdarkgrey,
+                      ),
+                      child: getImg.image == ''
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                iconStyle(
+                                    Icons.add_circle_outline_outlined,
+                                    80),
+                                kheight10,
+                                textStyle('Add Photos', 20)
+                              ],
+                            )
+                          : Container(
+                              width: double.infinity,
+                              height: 300,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: FileImage(
+                                        File(getImg.image.value))),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            )),
+                ));
+  }
 }

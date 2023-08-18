@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/navbar_controller.dart';
 import 'package:socion/controller/post_controller.dart';
+import 'package:socion/controller/story_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/Like_screen/screen_like.dart';
-import 'package:socion/view/user_profile_screen/screen_user_profile.dart';
+import 'package:socion/view/add_story_screen/screen_add_story.dart';
+import 'package:socion/view/others_profile_screen/screen_others_profile.dart';
+import 'package:socion/view/story_view_screen/screen_story_view.dart';
 import 'package:socion/view/view_image/screen_view-image.dart';
 import 'package:socion/view/widget/widget.dart';
 
@@ -21,8 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final getpost = Get.put(PostController());
   final getOther = Get.put(UserProfileController());
   final getnav = Get.put(NavBarController());
+  final getStory = Get.put(UserStoryController());
   @override
   Widget build(BuildContext context) {
+    getStory.getimage(getStory.auth.currentUser!.uid);
+    getStory.getStoryList();
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -35,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Spacer(),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        
+                      },
                       icon: iconStyle(Icons.messenger_outline),
                     )
                   ],
@@ -44,26 +52,61 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: double.infinity,
                   height: 100,
                   //Stories//
-                  child: StreamBuilder(
-                      stream: getpost.userdata.snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-
-                        return ListView.separated(
+                  child: Row(
+                    children: [
+                      Obx(
+                        () => Column(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                        image: NetworkImage(
+                                            getStory.userStoryImage.value),
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 2,
+                                  right: 2,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Get.to(AddStoryScreen());
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 15,
+                                      backgroundColor: kmixcolorpink,
+                                      child: iconStyle(Icons.add),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            kheight5,
+                            textStyle('Your Story', 10)
+                          ],
+                        ),
+                      ),
+                      kwidth10,
+                      Expanded(
+                        child: GetBuilder<UserStoryController>(builder: (controller) {
+                          return ListView.separated(
                           scrollDirection: Axis.horizontal,
-                          itemCount: snapshot.data!.docs.length,
+                          itemCount: getStory.storyList.length,
                           separatorBuilder: (context, index) {
                             return kwidth10;
                           },
                           itemBuilder: (context, index) {
-                            final data = snapshot.data!.docs[index];
+                            final data = controller.storyList.value[index];
                             const colorlist = Colors.accents;
                             return InkWell(
                               onTap: () {
-                                Get.to(UserProfileScreen(userId: data['userid']));
+                                Get.to(StoryViewScreen(
+                                    userId:data['userid'] ));
                               },
                               child: Column(
                                 children: [
@@ -72,25 +115,36 @@ class _HomeScreenState extends State<HomeScreen> {
                                     width: 70,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: colorlist[index], width: 3),
-                                      borderRadius: BorderRadius.circular(15),
+                                          color: colorlist[index],
+                                          width: 3),
+                                      borderRadius:
+                                          BorderRadius.circular(15),
                                       image: DecorationImage(
-                                          image: NetworkImage(data['image']),
+                                          image: NetworkImage(
+                                             data['image']
+                                                  ),
                                           fit: BoxFit.cover),
                                     ),
                                   ),
                                   kheight5,
-                                  textStyle(data['name'], 10)
+                                  textStyle(
+                                      data['name']
+                                      , 10)
                                 ],
                               ),
                             );
                           },
                         );
-                      }),
+                        },),
+                      ),
+                    ],
+                  ),
                 ),
                 //post//
                 StreamBuilder(
-                    stream: FirebaseFirestore.instance.collectionGroup('singleuserpost').snapshots(),
+                    stream: FirebaseFirestore.instance
+                        .collectionGroup('singleuserpost')
+                        .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
                         return const Center(child: CircularProgressIndicator());
@@ -111,11 +165,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Column(
                                     children: [
                                       GestureDetector(
-                                        onTap: (){
-                                          if(data['userid']== getOther.auth.currentUser?.uid){
+                                        onTap: () {
+                                          if (data['userid'] ==
+                                              getOther.auth.currentUser?.uid) {
                                             getnav.onSelected(4);
-                                          }else{
-                                            Get.to(UserProfileScreen(userId: data['userid'],));
+                                          } else {
+                                            Get.to(OtherProfileScreen(
+                                              userId: data['userid'],
+                                            ));
                                             print('arun start');
                                             print(data['userid']);
                                           }
@@ -195,8 +252,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ));
                                             },
                                             // child: Obx(() => textStyle('Likes ${getpost.countlist[index]}', 12))
-                                           child: StreamBuilder(
-                                                stream: getpost.alluserpostdata
+                                            child: StreamBuilder(
+                                                stream: getpost
+                                                    .likeandcommentdata
                                                     .doc(data.id)
                                                     .collection('like')
                                                     .snapshots(),
@@ -214,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           kwidth30,
                                           StreamBuilder(
-                                              stream: getpost.alluserpostdata
+                                              stream: getpost.likeandcommentdata
                                                   .doc(data.id)
                                                   .collection('comment')
                                                   .snapshots(),
