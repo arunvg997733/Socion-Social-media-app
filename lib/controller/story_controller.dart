@@ -41,4 +41,19 @@ class UserStoryController extends GetxController{
     }
     update();
   }
+
+  autodeletStory()async{
+    final sdata =await storyData.get();
+    for(var element in sdata.docs){
+      Timestamp time = element['time'];
+      int now = DateTime.now().millisecondsSinceEpoch;
+      final duration = now - time.millisecondsSinceEpoch;
+      print(duration);
+// 86400000
+      if(duration > 86400000){
+        storyData.doc(element['userid']).delete();
+      }
+    }
+    
+  }
 }

@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final getStory = Get.put(UserStoryController());
   @override
   Widget build(BuildContext context) {
+    getStory.autodeletStory();
     getStory.getimage(getStory.auth.currentUser!.uid);
     getStory.getStoryList();
     return Scaffold(
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Spacer(),
                     IconButton(
                       onPressed: () {
-                        
+                        getStory.autodeletStory();
                       },
                       icon: iconStyle(Icons.messenger_outline),
                     )

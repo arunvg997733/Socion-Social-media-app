@@ -101,6 +101,17 @@ class CreateUserScreen extends StatelessWidget {
                     style: TextStyle(color: kblue),
                   ),
                 ),
+                kheight30,
+                InkWell(
+                  onTap: () async {
+                    auth.signOut();
+                    Get.back();
+                  },
+                  child: const Text(
+                    'Go to Login Screen',
+                    style: TextStyle(color: kblue),
+                  ),
+                ),
               ],
             ),
           ),
