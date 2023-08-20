@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:socion/controller/navbar_controller.dart';
 import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
@@ -13,6 +14,7 @@ import 'package:socion/view/widget/widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
+  final getNav = Get.put(NavBarController());
   final getpost = Get.put(PostController());
   final getOther = Get.put(UserProfileController());
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -99,7 +101,7 @@ class ProfileScreen extends StatelessWidget {
                                 Color(0xffDE3377),
                               ])),
                           child: TextButton(
-                            onPressed: () async {getpost.getlength();},
+                            onPressed: () async {getNav.onSelected(1);},
                             child: Center(
                                 child: iconStyle(Icons.group_add_outlined)),
                           ),

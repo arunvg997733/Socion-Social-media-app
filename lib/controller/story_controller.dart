@@ -56,4 +56,12 @@ class UserStoryController extends GetxController{
     }
     
   }
+
+  Future <bool> currentStoryStatus()async{
+    final data =await storyData.doc(auth.currentUser?.uid).get();
+    if(data.exists){
+      return true;
+    }
+    return false;
+  }
 }

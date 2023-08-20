@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Spacer(),
                     IconButton(
                       onPressed: () {
-                        getStory.autodeletStory();
                       },
                       icon: iconStyle(Icons.messenger_outline),
                     )
@@ -55,41 +54,52 @@ class _HomeScreenState extends State<HomeScreen> {
                   //Stories//
                   child: Row(
                     children: [
-                      Obx(
-                        () => Column(
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  height: 70,
-                                  width: 70,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    image: DecorationImage(
-                                        image: NetworkImage(
-                                            getStory.userStoryImage.value),
-                                        fit: BoxFit.cover),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 2,
-                                  right: 2,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Get.to(AddStoryScreen());
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 15,
-                                      backgroundColor: kmixcolorpink,
-                                      child: iconStyle(Icons.add),
+                      InkWell(
+                        onTap: ()async {
+                          final  status = await getStory.currentStoryStatus();
+                          if(status == true){
+                            Get.to(StoryViewScreen(userId: getStory.auth.currentUser!.uid));
+                          }else{
+                            Get.to(AddStoryScreen());
+                          }
+                          
+                        },
+                        child: Obx(
+                          () => Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 70,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                              getStory.userStoryImage.value),
+                                          fit: BoxFit.cover),
                                     ),
                                   ),
-                                )
-                              ],
-                            ),
-                            kheight5,
-                            textStyle('Your Story', 10)
-                          ],
+                                  Positioned(
+                                    bottom: 2,
+                                    right: 2,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Get.to(AddStoryScreen());
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: kmixcolorpink,
+                                        child: iconStyle(Icons.add),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              kheight5,
+                              textStyle('Your Story', 10)
+                            ],
+                          ),
                         ),
                       ),
                       kwidth10,
