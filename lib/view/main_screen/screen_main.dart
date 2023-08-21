@@ -18,7 +18,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List pages = [
-      HomeScreen(),
+      const HomeScreen(),
       SearchScreen(),
       PostScreen(),
       const NotificationScreen(),

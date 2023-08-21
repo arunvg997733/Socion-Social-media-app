@@ -227,10 +227,7 @@ PersistentBottomSheetController<dynamic> showComment(
 }
 
 class ImagePicker extends StatelessWidget {
-   ImagePicker({
-    super.key,
-    required this.heigth
-  });
+  ImagePicker({super.key, required this.heigth});
 
   double heigth;
 
@@ -239,90 +236,84 @@ class ImagePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        backgroundColor: kdarkgrey,
-                        actions: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 40),
-                            child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    await getImg.pickGalleryImage();
-                                    Get.back();
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        'assets/gallery.png',
-                                        height: 50,
-                                      ),
-                                      kheight10,
-                                      textStyle('Gallery', 12)
-                                    ],
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    await getImg.pickCameraImage();
-                                    Get.back();
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        'assets/camera.png',
-                                        height: 50,
-                                      ),
-                                      kheight10,
-                                      textStyle('Camera', 12)
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Obx(
-                  () => Container(
-                      width: double.infinity,
-                      height: heigth,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: kdarkgrey,
-                      ),
-                      child: getImg.image == ''
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                iconStyle(
-                                    Icons.add_circle_outline_outlined,
-                                    80),
-                                kheight10,
-                                textStyle('Add Photos', 20)
-                              ],
-                            )
-                          : Container(
-                              width: double.infinity,
-                              height: 300,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: FileImage(
-                                        File(getImg.image.value))),
-                                borderRadius: BorderRadius.circular(10),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                backgroundColor: kdarkgrey,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            await getImg.pickGalleryImage();
+                            Get.back();
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/gallery.png',
+                                height: 50,
                               ),
-                            )),
-                ));
+                              kheight10,
+                              textStyle('Gallery', 12)
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            await getImg.pickCameraImage();
+                            Get.back();
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/camera.png',
+                                height: 50,
+                              ),
+                              kheight10,
+                              textStyle('Camera', 12)
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+          );
+        },
+        child: Obx(
+          () => Container(
+              width: double.infinity,
+              height: heigth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: kdarkgrey,
+              ),
+              child: getImg.image == ''
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        iconStyle(Icons.add_circle_outline_outlined, 80),
+                        kheight10,
+                        textStyle('Add Photos', 20)
+                      ],
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: FileImage(File(getImg.image.value))),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    )),
+        ));
   }
 }
-

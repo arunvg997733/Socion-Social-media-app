@@ -8,11 +8,11 @@ import 'package:socion/view/current_user_post_view_screen/screen_current_user_po
 import 'package:socion/view/widget/widget.dart';
 
 class OtherProfileScreen extends StatelessWidget {
-   OtherProfileScreen({super.key,required this.userId});
-   String userId;
-   final getUser = Get.put(AuthController());
-   final getpost = Get.put(PostController());
-   final getOther = Get.put(UserProfileController());
+  OtherProfileScreen({super.key, required this.userId});
+  String userId;
+  final getUser = Get.put(AuthController());
+  final getpost = Get.put(PostController());
+  final getOther = Get.put(UserProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class OtherProfileScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(5.0),
           child: RefreshIndicator(
-            onRefresh: ()async{
+            onRefresh: () async {
               getOther.gettingUserdata(userId);
               getOther.getpostdata(userId);
               getOther.getFollowerCount(userId);
@@ -43,61 +43,65 @@ class OtherProfileScreen extends StatelessWidget {
                     children: [
                       const Spacer(),
                       IconButton(
-                          onPressed: () async {
-                            
-                          },
+                          onPressed: () async {},
                           icon: iconStyle(Icons.more_vert))
                     ],
                   ),
                   kheight30,
-                  GetX<UserProfileController>(builder: (controller) {
-                    return CircleAvatar(
-                      radius: 70,
-                      backgroundImage: controller.user.value.image == ""
-                          ? const AssetImage('assets/user.jpg')
-                              as ImageProvider
-                          : NetworkImage(controller.user.value.image!));
-                  },),
+                  GetX<UserProfileController>(
+                    builder: (controller) {
+                      return CircleAvatar(
+                          radius: 70,
+                          backgroundImage: controller.user.value.image == ""
+                              ? const AssetImage('assets/user.jpg')
+                                  as ImageProvider
+                              : NetworkImage(controller.user.value.image!));
+                    },
+                  ),
                   kheight30,
                   GetX<UserProfileController>(
                     builder: (controller) {
-                    return textStyle(controller.user.value.name!, 20);
-                  },),
+                      return textStyle(controller.user.value.name!, 20);
+                    },
+                  ),
                   kheight10,
                   SizedBox(
-                    width: 150,
-                    child:GetX<UserProfileController>(
-                      builder: (controller) {
-                      return Center(child: textStyle(controller.user.value.bio!, 14)
-                        );
-                    },)
-                        
-                  ),
+                      width: 150,
+                      child: GetX<UserProfileController>(
+                        builder: (controller) {
+                          return Center(
+                              child: textStyle(controller.user.value.bio!, 14));
+                        },
+                      )),
                   kheight30,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Obx(() => Container(
-                        width: 100,
-                        height: 35,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: const LinearGradient(colors: [
-                              Color(0xffF65F53),
-                              Color(0xffDE3377),
-                            ])),
-                        child: TextButton(
-                          onPressed: () {
-                            if(getOther.followStatus == false){
-                              getOther.follow(userId);
-                            }else{
-                              getOther.unfollow(userId);
-                            }
-                            
-                          },
-                          child: Center(child:getOther.followStatus.value== false ? textStyle('Follow', 14):textStyle('Unfollow', 14)),
+                      Obx(
+                        () => Container(
+                          width: 100,
+                          height: 35,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: const LinearGradient(colors: [
+                                Color(0xffF65F53),
+                                Color(0xffDE3377),
+                              ])),
+                          child: TextButton(
+                            onPressed: () {
+                              if (getOther.followStatus == false) {
+                                getOther.follow(userId);
+                              } else {
+                                getOther.unfollow(userId);
+                              }
+                            },
+                            child: Center(
+                                child: getOther.followStatus.value == false
+                                    ? textStyle('Follow', 14)
+                                    : textStyle('Unfollow', 14)),
+                          ),
                         ),
-                      ),),
+                      ),
                       kwidth10,
                       Container(
                         width: 100,
@@ -110,8 +114,7 @@ class OtherProfileScreen extends StatelessWidget {
                             ])),
                         child: TextButton(
                           onPressed: () async {},
-                          child: Center(
-                              child:textStyle('Message', 14)),
+                          child: Center(child: textStyle('Message', 14)),
                         ),
                       ),
                     ],
@@ -123,8 +126,8 @@ class OtherProfileScreen extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Obx(() => textStyle(
-                                getOther.postcount.toString(), 20)),
+                            Obx(() =>
+                                textStyle(getOther.postcount.toString(), 20)),
                             textStyle('Post', 15),
                           ],
                         ),
@@ -141,7 +144,10 @@ class OtherProfileScreen extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            Obx(() => textStyle(getOther.followingCount.toString(), 20),),
+                            Obx(
+                              () => textStyle(
+                                  getOther.followingCount.toString(), 20),
+                            ),
                             textStyle('Following', 15),
                           ],
                         ),
@@ -151,34 +157,34 @@ class OtherProfileScreen extends StatelessWidget {
                   kheight30,
                   //Userpost
                   Obx(() => GridView.count(
-                    crossAxisCount: 3,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 2,
-                    mainAxisSpacing: 2,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    children: List.generate(
-                      getOther.postlist.length,
-                      (index) {
-                        final data = getOther.postlist[index];
-                        return InkWell(
-                          onTap: () {
-                            Get.to(() => CurrentUserPostViewScreen());
+                        crossAxisCount: 3,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 2,
+                        mainAxisSpacing: 2,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        children: List.generate(
+                          getOther.postlist.length,
+                          (index) {
+                            final data = getOther.postlist[index];
+                            return InkWell(
+                                onTap: () {
+                                  Get.to(() => CurrentUserPostViewScreen());
+                                },
+                                child: data.image != null
+                                    ? Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: NetworkImage(data.image),
+                                              fit: BoxFit.cover),
+                                        ),
+                                      )
+                                    : const CircularProgressIndicator());
                           },
-                          child:data.image != null ? Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image:
-                                            NetworkImage(data.image),
-                                        fit: BoxFit.cover),
-                                  ),
-                                )  : const CircularProgressIndicator()                              
-                        );
-                      },
-                    ),
-                  )),
+                        ),
+                      )),
                   kheight30
                 ],
               ),

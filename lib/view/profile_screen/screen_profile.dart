@@ -101,7 +101,9 @@ class ProfileScreen extends StatelessWidget {
                                 Color(0xffDE3377),
                               ])),
                           child: TextButton(
-                            onPressed: () async {getNav.onSelected(1);},
+                            onPressed: () async {
+                              getNav.onSelected(1);
+                            },
                             child: Center(
                                 child: iconStyle(Icons.group_add_outlined)),
                           ),
@@ -124,13 +126,18 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                              getOther.getfollowerList(getOther.auth.currentUser!.uid);
-                            Get.to(FollowScreen(text: 'Follower', newlist: getOther.followinglist));
-                              
+                              getOther.getfollowerList(
+                                  getOther.auth.currentUser!.uid);
+                              Get.to(FollowScreen(
+                                  text: 'Follower',
+                                  newlist: getOther.followinglist));
                             },
                             child: Column(
                               children: [
-                                Obx(() => textStyle(getOther.followercount.toString(), 20),),
+                                Obx(
+                                  () => textStyle(
+                                      getOther.followercount.toString(), 20),
+                                ),
                                 textStyle('Followers', 15),
                               ],
                             ),
@@ -139,12 +146,18 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(
                           child: InkWell(
                             onTap: () {
-                            getOther.getfollowingList(getOther.auth.currentUser!.uid);
-                            Get.to(FollowScreen(text: 'Following', newlist: getOther.followinglist));
-                          },
+                              getOther.getfollowingList(
+                                  getOther.auth.currentUser!.uid);
+                              Get.to(FollowScreen(
+                                  text: 'Following',
+                                  newlist: getOther.followinglist));
+                            },
                             child: Column(
                               children: [
-                                Obx(() => textStyle(getOther.followingCount.toString(), 20),),
+                                Obx(
+                                  () => textStyle(
+                                      getOther.followingCount.toString(), 20),
+                                ),
                                 textStyle('Following', 15),
                               ],
                             ),
@@ -155,7 +168,11 @@ class ProfileScreen extends StatelessWidget {
                     kheight30,
                     //Userpost
                     StreamBuilder(
-                        stream: getpost.postData.doc(auth.currentUser?.uid).collection('singleuserpost').orderBy('time').snapshots(),
+                        stream: getpost.postData
+                            .doc(auth.currentUser?.uid)
+                            .collection('singleuserpost')
+                            .orderBy('time')
+                            .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -190,8 +207,10 @@ class ProfileScreen extends StatelessWidget {
                                 final data = snapshot.data!.docs[index];
                                 return InkWell(
                                   onTap: () {
-                                    print(index);
-                                    Get.to(() => CurrentUserPostViewScreen(index: index,userId: getpost.auth.currentUser?.uid,));
+                                    Get.to(() => CurrentUserPostViewScreen(
+                                          index: index,
+                                          userId: getpost.auth.currentUser?.uid,
+                                        ));
                                   },
                                   child: data['image'] != null
                                       ? Container(

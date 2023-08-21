@@ -24,7 +24,8 @@ class PostController extends GetxController {
 
   addPost(String user, String userid, String discription, String image,
       String location, DateTime time) async {
-        final postpath = postData.doc(auth.currentUser?.uid).collection('singleuserpost');
+    final postpath =
+        postData.doc(auth.currentUser?.uid).collection('singleuserpost');
     final newpost = PostModel(
             user: user,
             userid: userid,
@@ -33,30 +34,37 @@ class PostController extends GetxController {
             location: location,
             time: time)
         .toMap();
-        postpath.add(newpost);
+    postpath.add(newpost);
   }
 
   deletePost(String postid) {
-    postData.doc(auth.currentUser?.uid).collection('singleuserpost').doc(postid).delete();
+    postData
+        .doc(auth.currentUser?.uid)
+        .collection('singleuserpost')
+        .doc(postid)
+        .delete();
     Get.back();
     Get.back();
   }
 
-  editPost(String postid,String discription,String location)async{
+  editPost(String postid, String discription, String location) async {
     DateTime time = DateTime.now();
     final data = {
-      'discription':discription,
-      'location':location,
-      'time':time
+      'discription': discription,
+      'location': location,
+      'time': time
     };
     try {
-      postData.doc(auth.currentUser?.uid).collection('singleuserpost').doc(postid).update(data);
-      showSnacksBar('Success','Post Updated');
+      postData
+          .doc(auth.currentUser?.uid)
+          .collection('singleuserpost')
+          .doc(postid)
+          .update(data);
+      showSnacksBar('Success', 'Post Updated');
     } catch (e) {
       showSnacksBar('Error', e.toString());
     }
     Get.offAll(MainScreen());
-
   }
 
   String formatTimeAgo(DateTime timestamp) {
@@ -64,7 +72,10 @@ class PostController extends GetxController {
   }
 
   postcount() async {
-    final data = await postData.doc(auth.currentUser?.uid).collection('singleuserpost').get();
+    final data = await postData
+        .doc(auth.currentUser?.uid)
+        .collection('singleuserpost')
+        .get();
     List<PostModel> newlist = [];
     for (var element in data.docs.toList()) {
       if (element['userid'] == auth.currentUser?.uid) {
@@ -80,7 +91,8 @@ class PostController extends GetxController {
     try {
       final lcdata = likeandcommentdata
           .doc(postid)
-          .collection('like').doc(auth.currentUser?.uid);
+          .collection('like')
+          .doc(auth.currentUser?.uid);
       final data = {'userid': auth.currentUser?.uid};
       lcdata.set(data);
     } catch (e) {
@@ -95,9 +107,6 @@ class PostController extends GetxController {
   //   countlist.add(postdata.docs.length);
   //   // countlist[index] = postdata.docs.length;
 
-    
-
-    
   //   // for (var element in postdata.docs.toList()) {
   //   //   count++;
   //   // }
@@ -106,7 +115,6 @@ class PostController extends GetxController {
 
   dislike(String postid) {
     try {
-      
       final postdata = postData.doc(postid).collection('like');
 
       postdata.doc(auth.currentUser?.uid).delete();
@@ -137,18 +145,8 @@ class PostController extends GetxController {
     data.add(newcomment);
   }
 
-  getlength()async{
-  final data =await likeandcommentdata.get();
-
-  data.docs.length;
-  print(data.docs.length);
+  getlength() async {
+    final data = await likeandcommentdata.get();
+    data.docs.length;
+  }
 }
-
-
-
-}
-
-
-
-
-

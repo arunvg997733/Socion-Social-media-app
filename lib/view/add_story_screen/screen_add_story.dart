@@ -26,38 +26,36 @@ class AddStoryScreen extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              ImagePicker(heigth:500),
+              ImagePicker(heigth: 500),
               kheight30,
               Container(
-                      width: 100,
-                      height: 35,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          gradient: const LinearGradient(colors: [
-                            Color(0xffF65F53),
-                            Color(0xffDE3377),
-                          ])),
-                      child: TextButton(
-                        onPressed: () async {
-                          if (getImg.image.value == '') {
-                          showSnacksBar('Alert', 'Please choose image');
-                        } else {
-                          try {
-                            DateTime time = DateTime.now();
-                            String image =
-                                await getImg.uploadimage();
-                            getStory.addStory(image);
-                            showSnacksBar("Success", 'Story Added');
-                            Get.offAll(() => MainScreen());
-                          } catch (e) {
-                            showSnacksBar('Error', e.toString());
-                          }
-                        }
-                          
-                        },
-                        child: Center(child: textStyle('Add Story', 14)),
-                      ),
-                    ),
+                width: 100,
+                height: 35,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: const LinearGradient(colors: [
+                      Color(0xffF65F53),
+                      Color(0xffDE3377),
+                    ])),
+                child: TextButton(
+                  onPressed: () async {
+                    if (getImg.image.value == '') {
+                      showSnacksBar('Alert', 'Please choose image');
+                    } else {
+                      try {
+                        DateTime time = DateTime.now();
+                        String image = await getImg.uploadimage();
+                        getStory.addStory(image);
+                        showSnacksBar("Success", 'Story Added');
+                        Get.offAll(() => MainScreen());
+                      } catch (e) {
+                        showSnacksBar('Error', e.toString());
+                      }
+                    }
+                  },
+                  child: Center(child: textStyle('Add Story', 14)),
+                ),
+              ),
             ],
           ),
         ),
@@ -65,4 +63,3 @@ class AddStoryScreen extends StatelessWidget {
     );
   }
 }
-

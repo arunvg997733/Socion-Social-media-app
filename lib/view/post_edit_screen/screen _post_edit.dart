@@ -6,11 +6,16 @@ import 'package:socion/core/constant.dart';
 import 'package:socion/view/widget/widget.dart';
 
 class PostEditScreen extends StatelessWidget {
-   PostEditScreen({super.key,required this.image,required this.discription,required this.location,required this.postId});
-   String image;
-   String discription;
-   String location;
-   String postId;
+  PostEditScreen(
+      {super.key,
+      required this.image,
+      required this.discription,
+      required this.location,
+      required this.postId});
+  String image;
+  String discription;
+  String location;
+  String postId;
 
   final getpost = Get.put(PostController());
   final getimg = Get.put(ProfilePickController());
@@ -22,7 +27,7 @@ class PostEditScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     discriptionctr.text = discription;
     locationctr.text = location;
-    
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -36,21 +41,20 @@ class PostEditScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                            width: double.infinity,
-                            height: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: kdarkgrey,
-                            ),
-                            child: Container(
-                                    width: double.infinity,
-                                    height: 300,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: NetworkImage(image)),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  )),
+                      width: double.infinity,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kdarkgrey,
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(image: NetworkImage(image)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      )),
                   kheight30,
                   TextFieldWidget(
                       controller: discriptionctr,
@@ -70,7 +74,8 @@ class PostEditScreen extends StatelessWidget {
                         ])),
                     child: TextButton(
                       onPressed: () async {
-                        getpost.editPost(postId, discriptionctr.text, locationctr.text);
+                        getpost.editPost(
+                            postId, discriptionctr.text, locationctr.text);
                       },
                       child: Center(child: textStyle('Update', 14)),
                     ),

@@ -135,7 +135,6 @@ class AuthController extends GetxController {
             idToken: googlesigninauth.idToken);
 
         await auth.signInWithCredential(authcredential);
-
       }
       final userdata = await FirebaseFirestore.instance
           .collection('userdata')

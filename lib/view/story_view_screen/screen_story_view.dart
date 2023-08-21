@@ -5,10 +5,8 @@ import 'package:socion/controller/progressbarcontroller.dart';
 import 'package:socion/controller/story_controller.dart';
 import 'package:socion/core/constant.dart';
 
-
-
 class StoryViewScreen extends StatefulWidget {
-  StoryViewScreen({super.key,required this.userId});
+  StoryViewScreen({super.key, required this.userId});
   String userId;
 
   @override
@@ -29,38 +27,38 @@ class _StoryViewScreenState extends State<StoryViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: StreamBuilder(
-          stream: getStory.storyData.doc(widget.userId).snapshots(),
-          builder: (context, snapshot) {
-             if(snapshot.connectionState == ConnectionState.waiting){
-              return Center(child: CircularProgressIndicator());
-             }
-            return Column(
-              children: [
-                Obx(() => LinearPercentIndicator(
-                  lineHeight: 5,
-                  backgroundColor: kgrey400,
-                  progressColor: kgrey600,
-                  percent: getProgress.percentage.value,
-                  barRadius: Radius.circular(5),
-                ),),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(image: NetworkImage(snapshot.data!['image']))
+            stream: getStory.storyData.doc(widget.userId).snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return Column(
+                children: [
+                  Obx(
+                    () => LinearPercentIndicator(
+                      lineHeight: 5,
+                      backgroundColor: kgrey400,
+                      progressColor: kgrey600,
+                      percent: getProgress.percentage.value,
+                      barRadius: const Radius.circular(5),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
-        ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(snapshot.data!['image']))),
+                    ),
+                  ),
+                ],
+              );
+            }),
       ),
     );
   }
 }
-
