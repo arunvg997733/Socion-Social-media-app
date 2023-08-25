@@ -21,7 +21,7 @@ class MainScreen extends StatelessWidget {
       const HomeScreen(),
       SearchScreen(),
       PostScreen(),
-      const NotificationScreen(),
+      NotificationScreen(),
       ProfileScreen()
     ];
     return Scaffold(

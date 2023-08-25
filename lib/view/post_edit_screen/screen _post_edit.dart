@@ -5,6 +5,7 @@ import 'package:socion/controller/profile_pic_contoller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/widget/widget.dart';
 
+// ignore: must_be_immutable
 class PostEditScreen extends StatelessWidget {
   PostEditScreen(
       {super.key,

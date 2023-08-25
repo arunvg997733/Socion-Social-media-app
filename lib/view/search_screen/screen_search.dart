@@ -32,6 +32,7 @@ class SearchScreen extends StatelessWidget {
                 builder: (controller) {
                   return ListView.separated(
                       itemBuilder: (context, index) {
+                        // ignore: invalid_use_of_protected_member
                         final data = getSearch.seachList.value[index];
                         return ListTile(
                           onTap: () {
@@ -42,13 +43,21 @@ class SearchScreen extends StatelessWidget {
                               textStyle(data.name!, 10),
                             ],
                           ),
-                          leading: CircleAvatar(
-                              backgroundImage: NetworkImage(data.image!)),
+                          leading: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: NetworkImage(data.image!),
+                                    fit: BoxFit.cover),
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
                         );
                       },
                       separatorBuilder: (context, index) {
                         return divider();
                       },
+                      // ignore: invalid_use_of_protected_member
                       itemCount: getSearch.seachList.value.length);
                 },
               ))

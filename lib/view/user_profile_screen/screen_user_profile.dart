@@ -7,6 +7,7 @@ import 'package:socion/core/constant.dart';
 import 'package:socion/view/current_user_post_view_screen/screen_current_user_post_view.dart';
 import 'package:socion/view/widget/widget.dart';
 
+// ignore: must_be_immutable
 class OtherProfileScreen extends StatelessWidget {
   OtherProfileScreen({super.key, required this.userId});
   String userId;

@@ -34,6 +34,7 @@ class UserStoryController extends GetxController {
   }
 
   getStoryList() async {
+    // ignore: invalid_use_of_protected_member
     storyList.value.clear();
     final followingdata = await followData
         .doc(auth.currentUser?.uid)
@@ -43,6 +44,7 @@ class UserStoryController extends GetxController {
       final story = await storyData.doc(element['userid']).get();
       if (story.exists) {
         final user = await userdata.doc(element['userid']).get();
+        // ignore: invalid_use_of_protected_member
         storyList.value.add(user);
       }
     }

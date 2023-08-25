@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:socion/controller/notificationcontroller.dart';
 import 'package:socion/model/post_model.dart';
 import 'package:socion/model/user_model.dart';
 
 class UserProfileController extends GetxController {
+  final getnoti = Get.put(NotificationController()); 
   final auth = FirebaseAuth.instance;
   final userdata = FirebaseFirestore.instance.collection('userdata');
   final postdata = FirebaseFirestore.instance.collection('postdata');
@@ -37,6 +41,7 @@ class UserProfileController extends GetxController {
     followingdata.set(datafollowing);
     getFollowerCount(userdata);
     checkFollow(userdata);
+    getnoti.addnotification(userdata,'','started to following you');
   }
 
 // for unfollowing other //
@@ -128,6 +133,7 @@ class UserProfileController extends GetxController {
   }
 
   getfollowingList(String userId) async {
+    // ignore: invalid_use_of_protected_member
     followinglist.value.clear();
     final followingdata =
         await followdata.doc(userId).collection('following').get();
@@ -135,12 +141,14 @@ class UserProfileController extends GetxController {
 
     for (var element in follolist) {
       final data = await getimage(element['userid']);
+      // ignore: invalid_use_of_protected_member
       followinglist.value.add(data);
     }
     update();
   }
 
   getfollowerList(String userId) async {
+    // ignore: invalid_use_of_protected_member
     followinglist.value.clear();
     final followingdata =
         await followdata.doc(userId).collection('follower').get();
@@ -148,6 +156,7 @@ class UserProfileController extends GetxController {
 
     for (var element in follolist) {
       final data = await getimage(element['userid']);
+      // ignore: invalid_use_of_protected_member
       followinglist.value.add(data);
     }
     update();
@@ -157,4 +166,6 @@ class UserProfileController extends GetxController {
     final data = await userdata.doc(userid).get();
     return data;
   }
+
+  
 }

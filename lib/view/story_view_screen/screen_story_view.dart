@@ -5,6 +5,7 @@ import 'package:socion/controller/progressbarcontroller.dart';
 import 'package:socion/controller/story_controller.dart';
 import 'package:socion/core/constant.dart';
 
+// ignore: must_be_immutable
 class StoryViewScreen extends StatefulWidget {
   StoryViewScreen({super.key, required this.userId});
   String userId;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,14 +39,25 @@ class AuthController extends GetxController {
   }
 
   signIn(String loginemail, String loginpassword) async {
+    final userdata = await firebasedb
+        .collection('userdata')
+        .doc(auth.currentUser?.uid)
+        .get();
     try {
       await auth.signInWithEmailAndPassword(
           email: loginemail, password: loginpassword);
-      if (auth.currentUser!.emailVerified == true) {
-        Get.offAll(() => MainScreen());
-      } else {
-        Get.offAll(() => CreateUserScreen());
-      }
+      // if (userdata.exists) {
+      //   Get.offAll(() => MainScreen());
+      // } else if (!userdata.exists) {
+      //   print('iam the one');
+      //   Get.offAll(
+      //     () => CreateUserScreen(),
+      //   );
+      // } else {
+        
+      //   Get.offAll(() => CreateUserScreen());
+      // }
+      checkuserstatus();
     } catch (e) {
       Get.snackbar('Error', '$e', backgroundColor: kwhite);
     }
@@ -165,5 +178,18 @@ class AuthController extends GetxController {
       'image': image,
     };
     user.doc(auth.currentUser?.uid).update(data);
+  }
+
+  reloadtimer() async {
+    int count = 0;
+    Timer.periodic(Duration(seconds: 1), (timer) async {
+      await auth.currentUser!.reload();
+      changeuserstatus();
+      count++;
+      print('timer working');
+      if (auth.currentUser?.emailVerified == true || count == 300) {
+        timer.cancel();
+      }
+    });
   }
 }

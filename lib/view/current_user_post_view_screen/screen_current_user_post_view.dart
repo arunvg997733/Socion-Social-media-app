@@ -7,6 +7,7 @@ import 'package:socion/view/post_edit_screen/screen%20_post_edit.dart';
 import 'package:socion/view/widget/widget.dart';
 import 'package:photo_view/photo_view.dart';
 
+// ignore: must_be_immutable
 class CurrentUserPostViewScreen extends StatelessWidget {
   CurrentUserPostViewScreen({super.key, this.index, this.userId});
   int? index;

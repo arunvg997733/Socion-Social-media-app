@@ -10,11 +10,13 @@ class UserSearchController extends GetxController {
   RxList seachList = <UserModel>[].obs;
 
   getSearchist() async {
+    // ignore: invalid_use_of_protected_member
     allList.value.clear();
     final searchdata = await userdata.get();
     for (var element in searchdata.docs) {
       allList.add(UserModel.fromMap(element));
     }
+    // ignore: invalid_use_of_protected_member
     seachList.value = allList.value;
     update();
   }

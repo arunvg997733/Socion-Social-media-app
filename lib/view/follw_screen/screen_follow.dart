@@ -4,6 +4,7 @@ import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/widget/widget.dart';
 
+// ignore: must_be_immutable
 class FollowScreen extends StatelessWidget {
   FollowScreen({super.key, required this.text, required this.newlist});
   String text;
@@ -23,6 +24,7 @@ class FollowScreen extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: ListView.separated(
                   itemBuilder: (context, index) {
+                    // ignore: invalid_use_of_protected_member
                     final data = controller.followinglist.value[index];
                     return Padding(
                       padding: const EdgeInsets.all(5.0),
@@ -63,6 +65,7 @@ class FollowScreen extends StatelessWidget {
                   separatorBuilder: (context, index) {
                     return divider();
                   },
+                  // ignore: invalid_use_of_protected_member
                   itemCount: controller.followinglist.value.length),
             );
           },

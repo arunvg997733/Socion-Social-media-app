@@ -112,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return kwidth10;
                               },
                               itemBuilder: (context, index) {
+                                // ignore: invalid_use_of_protected_member
                                 final data = controller.storyList.value[index];
                                 const colorlist = Colors.accents;
                                 return InkWell(
@@ -318,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       if (snapshot.data ==
                                                           false) {
                                                         setState(() {
-                                                          getpost.like(data.id);
+                                                          getpost.like(data.id,data['image'],data['userid']);
                                                           // getpost.getLikecount(data.id);
                                                         });
                                                       } else {
@@ -343,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 }),
                                             InkWell(
                                               onTap: () {
-                                                showComment(context, data.id);
+                                                showComment(context, data.id,data['image'],data['userid']);
                                               },
                                               child: Row(
                                                 children: [

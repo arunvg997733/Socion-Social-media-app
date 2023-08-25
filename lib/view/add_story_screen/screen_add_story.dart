@@ -43,7 +43,6 @@ class AddStoryScreen extends StatelessWidget {
                       showSnacksBar('Alert', 'Please choose image');
                     } else {
                       try {
-                        DateTime time = DateTime.now();
                         String image = await getImg.uploadimage();
                         getStory.addStory(image);
                         showSnacksBar("Success", 'Story Added');

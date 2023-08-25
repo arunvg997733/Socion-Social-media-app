@@ -34,9 +34,20 @@ Widget textStyle(String text, double size) {
     text,
     textAlign: TextAlign.center,
     style: TextStyle(
+      overflow: TextOverflow.ellipsis,
       color: kwhite,
       fontSize: size,
     ),
+  );
+}
+
+Widget NotificationtextStyle({required String text,required double size,int? maxline}) {
+  return Text(
+    text,
+    style: TextStyle(
+      color: kwhite,
+      fontSize: size,
+    ),maxLines: maxline,
   );
 }
 
@@ -144,7 +155,7 @@ class UserDetails extends StatelessWidget {
 }
 
 PersistentBottomSheetController<dynamic> showComment(
-    BuildContext context, String data) {
+    BuildContext context, String data,String postimage,String userId) {
   final getpost = Get.put(PostController());
   return showBottomSheet(
     backgroundColor: Colors.transparent,
@@ -209,7 +220,7 @@ PersistentBottomSheetController<dynamic> showComment(
                             ])),
                         child: TextButton(
                           onPressed: () async {
-                            getpost.comment(commentctr.text, data);
+                            getpost.comment(commentctr.text, data,userId,postimage);
                             Get.back();
                           },
                           child: Center(child: textStyle('Post', 14)),
@@ -226,6 +237,7 @@ PersistentBottomSheetController<dynamic> showComment(
   );
 }
 
+// ignore: must_be_immutable
 class ImagePicker extends StatelessWidget {
   ImagePicker({super.key, required this.heigth});
 

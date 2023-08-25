@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:socion/controller/notificationcontroller.dart';
 import 'package:socion/model/post_model.dart';
 import 'package:socion/view/main_screen/screen_main.dart';
 import 'package:socion/view/widget/widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class PostController extends GetxController {
+  final getnoti = Get.put(NotificationController());
   RxInt userpostcount = 0.obs;
   RxBool userlike = false.obs;
   RxInt likeCount = 0.obs;
@@ -87,7 +89,7 @@ class PostController extends GetxController {
     userpostcount.value = newlist.length;
   }
 
-  like(String postid) {
+  like(String postid,String postimage,String userid) {
     try {
       final lcdata = likeandcommentdata
           .doc(postid)
@@ -95,6 +97,7 @@ class PostController extends GetxController {
           .doc(auth.currentUser?.uid);
       final data = {'userid': auth.currentUser?.uid};
       lcdata.set(data);
+      getnoti.addnotification(userid,postimage,'liked your post');
     } catch (e) {
       showSnacksBar('Error', e.toString());
     }
@@ -115,9 +118,13 @@ class PostController extends GetxController {
 
   dislike(String postid) {
     try {
-      final postdata = postData.doc(postid).collection('like');
+      final lcdata = likeandcommentdata
+          .doc(postid)
+          .collection('like')
+          .doc(auth.currentUser?.uid);
+      // final postdata = postData.doc(postid).collection('like');
 
-      postdata.doc(auth.currentUser?.uid).delete();
+      lcdata.delete();
     } catch (e) {
       showSnacksBar('Error', e.toString());
     }
@@ -139,10 +146,11 @@ class PostController extends GetxController {
     return false;
   }
 
-  comment(String text, String postId) {
+  comment(String text, String postId,String userId,String postimage) {
     final data = likeandcommentdata.doc(postId).collection('comment');
     final newcomment = {'userid': auth.currentUser?.uid, 'comment': text};
     data.add(newcomment);
+    getnoti.addnotification(userId, postimage,'commented on your post');
   }
 
   getlength() async {

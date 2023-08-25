@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/controller/authcontroller.dart';
+import 'package:socion/view/login_screen/screen_login.dart';
 import 'package:socion/view/main_screen/screen_main.dart';
 import 'package:socion/view/widget/widget.dart';
 
@@ -49,6 +50,7 @@ class CreateUserScreen extends StatelessWidget {
                   () => InkWell(
                     onTap: () async {
                       await getcrt.verifyMail();
+                      getcrt.reloadtimer();
                     },
                     child: getcrt.verify.value == false
                         ? const Text(
@@ -93,19 +95,8 @@ class CreateUserScreen extends StatelessWidget {
                 kheight30,
                 InkWell(
                   onTap: () async {
-                    await auth.currentUser!.reload();
-                    getcrt.changeuserstatus();
-                  },
-                  child: const Text(
-                    'Refresh',
-                    style: TextStyle(color: kblue),
-                  ),
-                ),
-                kheight30,
-                InkWell(
-                  onTap: () async {
-                    auth.signOut();
-                    Get.back();
+                    await auth.signOut();
+                    Get.offAll(LoginScreen());
                   },
                   child: const Text(
                     'Go to Login Screen',
