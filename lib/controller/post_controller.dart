@@ -97,7 +97,7 @@ class PostController extends GetxController {
           .doc(auth.currentUser?.uid);
       final data = {'userid': auth.currentUser?.uid};
       lcdata.set(data);
-      getnoti.addnotification(userid,postimage,'liked your post');
+      getnoti.addnotification(userid,postimage,'liked your post',postid,'',);
     } catch (e) {
       showSnacksBar('Error', e.toString());
     }
@@ -150,7 +150,7 @@ class PostController extends GetxController {
     final data = likeandcommentdata.doc(postId).collection('comment');
     final newcomment = {'userid': auth.currentUser?.uid, 'comment': text};
     data.add(newcomment);
-    getnoti.addnotification(userId, postimage,'commented on your post');
+    getnoti.addnotification(userId, postimage,'commented on your post',postId,text);
   }
 
   getlength() async {

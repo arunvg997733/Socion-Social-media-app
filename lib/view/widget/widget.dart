@@ -45,6 +45,7 @@ Widget NotificationtextStyle({required String text,required double size,int? max
   return Text(
     text,
     style: TextStyle(
+      overflow: TextOverflow.ellipsis,
       color: kwhite,
       fontSize: size,
     ),maxLines: maxline,

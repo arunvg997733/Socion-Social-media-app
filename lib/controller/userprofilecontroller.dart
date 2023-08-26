@@ -41,7 +41,7 @@ class UserProfileController extends GetxController {
     followingdata.set(datafollowing);
     getFollowerCount(userdata);
     checkFollow(userdata);
-    getnoti.addnotification(userdata,'','started to following you');
+    getnoti.addnotification(userdata,'','started to following you','','');
   }
 
 // for unfollowing other //

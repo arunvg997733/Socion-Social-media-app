@@ -29,9 +29,11 @@ class NotificationController extends GetxController {
         'user': userdetail['name'],
         'image': userdetail['image'],
         'matter': element['matter'],
-        'notificationid': element.id,
         'time': time,
-        'postimage': element['post']
+        'postimage': element['post'],
+        'userid':userdetail['userid'],
+        'postid':element['postid'],
+        'comment':element['comment']
       };
       notificationlist.value.add(newdata);
     }
@@ -42,24 +44,30 @@ class NotificationController extends GetxController {
     return timeago.format(timestamp, locale: 'en_long');
   }
 
-  addnotification(String userId, String postimage, String matter) async {
+  addnotification(String userId, String postimage, String matter,String postid,String comment) async { 
     DateTime time = DateTime.now();
+    if(comment != ''){
+      comment = ': $comment';
+    }
     final data =
-        await notificationData.doc(userId).collection('usernotification');
+         notificationData.doc(userId).collection('usernotification').doc(userId+postid+matter);
     final adddata = {
       'userid': auth.currentUser?.uid,
       'matter': matter,
       'time': time,
-      'post': postimage
+      'post': postimage,
+      'postid':postid,
+      'comment':comment
     };
-    data.add(adddata);
+    data.set(adddata);
   }
 
   deleteNotification(String id) async {
+    String dataId = auth.currentUser!.uid+id;
     final data = notificationData
         .doc(auth.currentUser?.uid)
         .collection('usernotification')
-        .doc(id);
+        .doc(dataId);
     data.delete();
     updateNotification();
   }

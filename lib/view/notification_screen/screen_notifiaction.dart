@@ -36,8 +36,9 @@ class NotificationScreen extends StatelessWidget {
                           items: <PopupMenuEntry>[
                             PopupMenuItem(
                                 onTap: () {
+                                  print(data['userid']+data['postid']+data['matter']);
                                   getnoti.deleteNotification(
-                                      data['notificationid']);
+                                      data['postid']+data['matter']);
                                 },
                                 child: textStyle('Delete', 12))
                           ]);
@@ -46,23 +47,20 @@ class NotificationScreen extends StatelessWidget {
                       radius: 25,
                       backgroundImage: NetworkImage(data['image']),
                     ),
-                    title: Row(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // NotificationtextStyle(text: '${data['user']+'  '+data['matter']+'  '+data['time']}',size:13,maxline: 2)
-                                textStyle(data['user'], 13),
-                                kwidth5,
-                                textStyle(data['matter'], 13),
-                              ],
-                            ),
-                            textStyle(data['time'], 13),
+                            Expanded(child: NotificationtextStyle(text: '${data['user']+'  '+data['matter']+'  '+data['comment'] }',size:14,maxline: 2))
+                            // textStyle(data['user'], 14),
+                            // kwidth5,
+                            // textStyle(data['matter'], 14)
                           ],
                         ),
+                        kheight5,
+                        textStyle(data['time'], 12),
                       ],
                     ),
                     trailing: data['postimage'] == ''
