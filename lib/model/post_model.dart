@@ -23,7 +23,7 @@ class PostModel {
         discription: map['discription'],
         image: map['image'],
         location: map['location'],
-        time: map['time'].toDate());
+        time: map['time'].toDate()); 
   }
 
   Map<String, dynamic> toMap() {

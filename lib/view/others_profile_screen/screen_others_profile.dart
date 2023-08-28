@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/authcontroller.dart';
+import 'package:socion/controller/messagecontroller.dart';
 import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/view/chatscreen/screen_chat.dart';
 import 'package:socion/view/current_user_post_view_screen/screen_current_user_post_view.dart';
 import 'package:socion/view/follw_screen/screen_follow.dart';
 import 'package:socion/view/widget/widget.dart';
@@ -12,9 +14,12 @@ import 'package:socion/view/widget/widget.dart';
 class OtherProfileScreen extends StatelessWidget {
   OtherProfileScreen({super.key, required this.userId});
   String userId;
+  String? image;
+  String? name;
   final getUser = Get.put(AuthController());
   final getpost = Get.put(PostController());
   final getOther = Get.put(UserProfileController());
+  final getMsg = Get.put(MessageController());
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +57,8 @@ class OtherProfileScreen extends StatelessWidget {
                   kheight30,
                   GetX<UserProfileController>(
                     builder: (controller) {
+                      name =controller.user.value.name!;
+                      image = controller.user.value.image;
                       return CircleAvatar(
                           radius: 70,
                           backgroundImage: controller.user.value.image == ""
@@ -115,7 +122,9 @@ class OtherProfileScreen extends StatelessWidget {
                               Color(0xffDE3377),
                             ])),
                         child: TextButton(
-                          onPressed: () async {},
+                          onPressed: () async {
+                            Get.to(ChatScreen(name: name!, image: image!, userId: userId));
+                          },
                           child: Center(child: textStyle('Message', 14)),
                         ),
                       ),

@@ -8,6 +8,7 @@ import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/Like_screen/screen_like.dart';
 import 'package:socion/view/add_story_screen/screen_add_story.dart';
+import 'package:socion/view/message_screen/screen_message.dart';
 import 'package:socion/view/others_profile_screen/screen_others_profile.dart';
 import 'package:socion/view/story_view_screen/screen_story_view.dart';
 import 'package:socion/view/view_image/screen_view-image.dart';
@@ -42,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Spacer(),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.to(MessageScreen());
+                      },
                       icon: iconStyle(Icons.messenger_outline),
                     )
                   ],

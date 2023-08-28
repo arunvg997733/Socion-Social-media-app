@@ -17,13 +17,13 @@ class NotificationScreen extends StatelessWidget {
         centerTitle: true,
         title: textStyle('Notification', 20),
       ),
-      body: SafeArea(child: GetBuilder<NotificationController>(
+      body: SafeArea(child:GetBuilder<NotificationController>(
         builder: (controller) {
           return RefreshIndicator(
             onRefresh: () async {
               getnoti.updateNotification();
             },
-            child: ListView.separated(
+            child:getnoti.notificationlist.isEmpty ? Center(child: textStyle('No Notification', 20)) :  ListView.separated(
                 itemBuilder: (context, index) {
                   Map<String, dynamic> data =
                       getnoti.notificationlist.value[index];

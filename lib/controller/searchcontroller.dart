@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:socion/model/user_model.dart';
 
 class UserSearchController extends GetxController {
+  FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference userdata =
       FirebaseFirestore.instance.collection('userdata');
 
@@ -14,7 +16,9 @@ class UserSearchController extends GetxController {
     allList.value.clear();
     final searchdata = await userdata.get();
     for (var element in searchdata.docs) {
-      allList.add(UserModel.fromMap(element));
+      if(element['userid']!= auth.currentUser?.uid){
+        allList.value.add(UserModel.fromMap(element));
+      }
     }
     // ignore: invalid_use_of_protected_member
     seachList.value = allList.value;
