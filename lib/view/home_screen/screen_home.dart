@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/navbar_controller.dart';
 import 'package:socion/controller/post_controller.dart';
+import 'package:socion/controller/pushnotificationcontroller.dart';
 import 'package:socion/controller/story_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
@@ -186,8 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Get.to(OtherProfileScreen(
                                               userId: data['userid'],
                                             ));
-                                            print('arun start');
-                                            print(data['userid']);
                                           }
                                         },
                                         child: UserDetails(
@@ -301,7 +300,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                               }),
                                           const Spacer(),
                                           IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              pushNotificationController
+                                                  .storeToken();
+                                            },
                                             icon: iconStyle(
                                                 Icons.star_outline_rounded),
                                           )
@@ -322,7 +324,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       if (snapshot.data ==
                                                           false) {
                                                         setState(() {
-                                                          getpost.like(data.id,data['image'],data['userid']);
+                                                          getpost.like(
+                                                              data.id,
+                                                              data['image'],
+                                                              data['userid']);
                                                           // getpost.getLikecount(data.id);
                                                         });
                                                       } else {
@@ -347,7 +352,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 }),
                                             InkWell(
                                               onTap: () {
-                                                showComment(context, data.id,data['image'],data['userid']);
+                                                showComment(
+                                                    context,
+                                                    data.id,
+                                                    data['image'],
+                                                    data['userid']);
                                               },
                                               child: Row(
                                                 children: [

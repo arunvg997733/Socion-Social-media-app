@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:socion/controller/pushnotificationcontroller.dart';
 import 'package:socion/model/message_model.dart';
 
 class MessageController extends GetxController{
@@ -10,7 +10,7 @@ class MessageController extends GetxController{
   CollectionReference chatGroupdata = FirebaseFirestore.instance.collection('chatgroupdata');
   RxList chatGroupList = [].obs;
   
-  sendmessage(String receiverId,String message,String image,String name){
+  sendmessage(String receiverId,String message,String image,String name,String token){
     final time = Timestamp.now();
     final curreuserid = auth.currentUser!.uid;
     final newmessage = MessageModel(senderId: curreuserid, receiverId: receiverId, message: message, time: time);
@@ -26,6 +26,8 @@ class MessageController extends GetxController{
       'userid':receiverId
     };
     chatGroupdata.doc(chatRoomId).set(lastmessage);
+    print(token);
+    pushNotificationController.sendNotification('New Messge', message, token);
   }
 
   Stream <QuerySnapshot> getMessage(receiverId){

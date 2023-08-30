@@ -26,6 +26,7 @@ class NotificationScreen extends StatelessWidget {
             child:getnoti.notificationlist.isEmpty ? Center(child: textStyle('No Notification', 20)) :  ListView.separated(
                 itemBuilder: (context, index) {
                   Map<String, dynamic> data =
+                      // ignore: invalid_use_of_protected_member
                       getnoti.notificationlist.value[index];
                   return ListTile(
                     onLongPress: () {

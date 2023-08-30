@@ -17,6 +17,7 @@ class UserSearchController extends GetxController {
     final searchdata = await userdata.get();
     for (var element in searchdata.docs) {
       if(element['userid']!= auth.currentUser?.uid){
+        // ignore: invalid_use_of_protected_member
         allList.value.add(UserModel.fromMap(element));
       }
     }

@@ -6,11 +6,13 @@ import 'package:socion/controller/messagecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/widget/widget.dart';
 
+// ignore: must_be_immutable
 class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key,required this.name,required this.image,required this.userId});
+  ChatScreen({super.key,required this.name,required this.image,required this.userId,required this.token});
   String name;
   String image;
   String userId;
+  String token;
   final getMsg = Get.put(MessageController());
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,7 @@ class ChatScreen extends StatelessWidget {
               );
             },),
             kheight10,
-            MessageTextField(userId: userId,image: image,name: name,)
+            MessageTextField(userId: userId,image: image,name: name,token: token,)
           ],
         ),
       ),
@@ -76,6 +78,7 @@ class ChatScreen extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class Message extends StatelessWidget {
   FirebaseAuth auth = FirebaseAuth.instance;
   Message({super.key,required this.data  });
@@ -98,11 +101,13 @@ class Message extends StatelessWidget {
   
 }
 
+// ignore: must_be_immutable
 class MessageTextField extends StatelessWidget {
-   MessageTextField({super.key,required this.userId,required this.name,required this.image,});
+   MessageTextField({super.key,required this.userId,required this.name,required this.image,required this.token});
    String userId;
    String name;
    String image;
+   String token;
   final getMsg = Get.put(MessageController());
   TextEditingController messagectr = TextEditingController();
   @override
@@ -129,7 +134,7 @@ class MessageTextField extends StatelessWidget {
             )),
             IconButton(onPressed: () {
               if(messagectr.text.isNotEmpty){
-                getMsg.sendmessage(userId, messagectr.text,image,name);
+                getMsg.sendmessage(userId, messagectr.text,image,name,token);
               }
               messagectr.clear();
             }, icon: iconStyle(Icons.send))

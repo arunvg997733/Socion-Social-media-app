@@ -16,6 +16,7 @@ class OtherProfileScreen extends StatelessWidget {
   String userId;
   String? image;
   String? name;
+  String? token;
   final getUser = Get.put(AuthController());
   final getpost = Get.put(PostController());
   final getOther = Get.put(UserProfileController());
@@ -59,6 +60,7 @@ class OtherProfileScreen extends StatelessWidget {
                     builder: (controller) {
                       name =controller.user.value.name!;
                       image = controller.user.value.image;
+                      token = controller.user.value.image;
                       return CircleAvatar(
                           radius: 70,
                           backgroundImage: controller.user.value.image == ""
@@ -123,7 +125,7 @@ class OtherProfileScreen extends StatelessWidget {
                             ])),
                         child: TextButton(
                           onPressed: () async {
-                            Get.to(ChatScreen(name: name!, image: image!, userId: userId));
+                            Get.to(ChatScreen(name: name!, image: image!, userId: userId,token: token!));
                           },
                           child: Center(child: textStyle('Message', 14)),
                         ),

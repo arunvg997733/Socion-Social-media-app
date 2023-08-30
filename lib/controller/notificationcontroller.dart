@@ -21,6 +21,7 @@ class NotificationController extends GetxController {
         .doc(auth.currentUser?.uid)
         .collection('usernotification')
         .get();
+    // ignore: invalid_use_of_protected_member
     notificationlist.value.clear();
     for (var element in data.docs) {
       final userdetail = await userdata.doc(element['userid']).get();
@@ -31,10 +32,11 @@ class NotificationController extends GetxController {
         'matter': element['matter'],
         'time': time,
         'postimage': element['post'],
-        'userid':userdetail['userid'],
-        'postid':element['postid'],
-        'comment':element['comment']
+        'userid': userdetail['userid'],
+        'postid': element['postid'],
+        'comment': element['comment']
       };
+      // ignore: invalid_use_of_protected_member
       notificationlist.value.add(newdata);
     }
     update();
@@ -44,26 +46,29 @@ class NotificationController extends GetxController {
     return timeago.format(timestamp, locale: 'en_long');
   }
 
-  addnotification(String userId, String postimage, String matter,String postid,String comment) async { 
+  addnotification(String userId, String postimage, String matter, String postid,
+      String comment) async {
     DateTime time = DateTime.now();
-    if(comment != ''){
+    if (comment != '') {
       comment = ': $comment';
     }
-    final data =
-         notificationData.doc(userId).collection('usernotification').doc(userId+postid+matter);
+    final data = notificationData
+        .doc(userId)
+        .collection('usernotification')
+        .doc(userId + postid + matter);
     final adddata = {
       'userid': auth.currentUser?.uid,
       'matter': matter,
       'time': time,
       'post': postimage,
-      'postid':postid,
-      'comment':comment
+      'postid': postid,
+      'comment': comment
     };
     data.set(adddata);
   }
 
   deleteNotification(String id) async {
-    String dataId = auth.currentUser!.uid+id;
+    String dataId = auth.currentUser!.uid + id;
     final data = notificationData
         .doc(auth.currentUser?.uid)
         .collection('usernotification')

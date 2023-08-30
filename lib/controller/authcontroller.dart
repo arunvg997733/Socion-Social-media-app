@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -39,10 +40,10 @@ class AuthController extends GetxController {
   }
 
   signIn(String loginemail, String loginpassword) async {
-    final userdata = await firebasedb
-        .collection('userdata')
-        .doc(auth.currentUser?.uid)
-        .get();
+    // final userdata = await firebasedb
+    //     .collection('userdata')
+    //     .doc(auth.currentUser?.uid)
+    //     .get();
     try {
       await auth.signInWithEmailAndPassword(
           email: loginemail, password: loginpassword);
@@ -73,6 +74,7 @@ class AuthController extends GetxController {
   }
 
   addUserDetails(String name, String emaildata) async {
+    String? token = await FirebaseMessaging.instance.getToken();
     final DocumentReference userdata = FirebaseFirestore.instance
         .collection('userdata')
         .doc(auth.currentUser?.uid);
@@ -81,6 +83,7 @@ class AuthController extends GetxController {
             name: name,
             email: emaildata,
             id: auth.currentUser?.uid,
+            token: token,
             bio: '',
             image: '',
             gender: '')
