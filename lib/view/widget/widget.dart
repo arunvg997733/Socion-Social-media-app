@@ -41,6 +41,18 @@ Widget textStyle(String text, double size) {
   );
 }
 
+Widget MessagetextStyle(String text, double size) {
+  return Text(
+    text,
+    maxLines: 100,
+    style: TextStyle(
+      color: kwhite,
+      fontSize: size,
+      
+    ),
+  );
+}
+
 Widget NotificationtextStyle({required String text,required double size,int? maxline}) {
   return Text(
     text,
@@ -191,15 +203,23 @@ PersistentBottomSheetController<dynamic> showComment(
                                   itemBuilder: (context, index) {
                                     final commentdata =
                                         snapshot.data!.docs[index];
-                                    return Row(
+                                        final time = getpost.formatTimeAgo(commentdata['time'].toDate());
+                                    return Column(
                                       children: [
-                                        UserDetails(
-                                          stream: getpost.userdata
-                                              .doc(commentdata["userid"])
-                                              .snapshots(),
+                                        Row(
+                                          children: [
+                                            UserDetails(
+                                              stream: getpost.userdata
+                                                  .doc(commentdata["userid"])
+                                                  .snapshots(),
+                                            ),
+                                            kwidth10,
+                                            Expanded(child: textStyle(commentdata['comment'], 15)),
+                                            
+                                            
+                                          ],
                                         ),
-                                        kwidth10,
-                                        textStyle(commentdata['comment'], 15)
+                                        textStyle(time, 10)
                                       ],
                                     );
                                   },

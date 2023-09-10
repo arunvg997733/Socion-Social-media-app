@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:socion/controller/messagecontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/view/widget/widget.dart';
@@ -83,8 +84,12 @@ class Message extends StatelessWidget {
   FirebaseAuth auth = FirebaseAuth.instance;
   Message({super.key,required this.data  });
   DocumentSnapshot data;
+  
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    DateTime time = data['time'].toDate();
+    String formatTime = DateFormat('h:mm a').format(time);
     return Container(
       alignment: data['senderid'] == auth.currentUser!.uid ? Alignment.centerRight:Alignment.centerLeft,
       child: Container(
@@ -94,7 +99,25 @@ class Message extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-          child: textStyle(data['message'], 13),
+          child: Flex(
+            direction: Axis.vertical,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              data['postimg'] == '' ? SizedBox(): Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Container(
+                  height: size.width*0.6,
+                  width: size.width*0.6,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image: NetworkImage(data['postimg']))
+                  ),
+                ),
+              ),
+              data['message']== ''? SizedBox(): MessagetextStyle(data['message'], 14),
+              kwidth10,
+              MessagetextStyle(formatTime, 10)
+            ],
+          ),
         )),
     );
   }
@@ -134,7 +157,7 @@ class MessageTextField extends StatelessWidget {
             )),
             IconButton(onPressed: () {
               if(messagectr.text.isNotEmpty){
-                getMsg.sendmessage(userId, messagectr.text,image,name,token);
+                getMsg.sendmessage(userId, messagectr.text,image,name,token,'');
               }
               messagectr.clear();
             }, icon: iconStyle(Icons.send))

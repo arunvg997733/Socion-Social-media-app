@@ -17,6 +17,7 @@ class OtherProfileScreen extends StatelessWidget {
   String? image;
   String? name;
   String? token;
+  
   final getUser = Get.put(AuthController());
   final getpost = Get.put(PostController());
   final getOther = Get.put(UserProfileController());

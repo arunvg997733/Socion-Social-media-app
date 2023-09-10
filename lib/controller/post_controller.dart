@@ -103,18 +103,6 @@ class PostController extends GetxController {
     }
   }
 
-  // getLikecount(String postid,int index) async {
-  //   final postdata = await alluserpostdata.doc(postid).collection('like').get();
-  //   // int count = 0;
-  //   // ignore: unused_local_variable
-  //   countlist.add(postdata.docs.length);
-  //   // countlist[index] = postdata.docs.length;
-
-  //   // for (var element in postdata.docs.toList()) {
-  //   //   count++;
-  //   // }
-  //   // likeCount.value = count;
-  // }
 
   dislike(String postid) {
     try {
@@ -147,8 +135,9 @@ class PostController extends GetxController {
   }
 
   comment(String text, String postId,String userId,String postimage) {
+    final time = DateTime.now();
     final data = likeandcommentdata.doc(postId).collection('comment');
-    final newcomment = {'userid': auth.currentUser?.uid, 'comment': text};
+    final newcomment = {'userid': auth.currentUser?.uid, 'comment': text,'time':time};
     data.add(newcomment);
     getnoti.addnotification(userId, postimage,'commented on your post',postId,text);
   }

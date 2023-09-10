@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:socion/controller/pushnotificationcontroller.dart';
 import 'package:socion/core/constant.dart';
 import 'package:socion/model/user_model.dart';
 import 'package:socion/view/create_profile_screen/screen_createuser.dart';
@@ -28,6 +29,7 @@ class AuthController extends GetxController {
     try {
       await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+          pushNotificationController.storeToken();
       Get.snackbar("Success", "Your Account is created");
       if (auth.currentUser!.emailVerified == true) {
         Get.offAll(() => MainScreen());
@@ -59,6 +61,7 @@ class AuthController extends GetxController {
       //   Get.offAll(() => CreateUserScreen());
       // }
       checkuserstatus();
+      pushNotificationController.storeToken();
     } catch (e) {
       Get.snackbar('Error', '$e', backgroundColor: kwhite);
     }
@@ -164,6 +167,7 @@ class AuthController extends GetxController {
             auth.currentUser!.email.toString());
         Get.offAll(() => MainScreen());
       }
+      pushNotificationController.storeToken();
       Get.snackbar("Success", 'You are Loging Successfully');
     } catch (e) {
       Get.snackbar("Error", '$e');

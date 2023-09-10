@@ -35,14 +35,17 @@ class MessageScreen extends StatelessWidget {
       
 
       GetBuilder<UserSearchController>(builder: (controller) {
-        return ListView.separated(itemBuilder: (context, index) {
-        // ignore: invalid_use_of_protected_member
-        final data = controller.allList.value[index];
-        return MessageTile(userData:data);
-      }, separatorBuilder: (context, index) {
-        return divider();
-      // ignore: invalid_use_of_protected_member
-      }, itemCount: controller.allList.value.length);
+        return Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: ListView.separated(itemBuilder: (context, index) {
+          // ignore: invalid_use_of_protected_member
+          final data = controller.allList.value[index];
+          return MessageTile(userData:data);
+              }, separatorBuilder: (context, index) {
+          return divider();
+              // ignore: invalid_use_of_protected_member
+              }, itemCount: controller.allList.value.length),
+        );
       },)
     );
   }

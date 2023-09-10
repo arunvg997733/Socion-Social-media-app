@@ -27,6 +27,14 @@ class ProfileScreen extends StatelessWidget {
     getOther.getCurrentUserFollowingCount();
     getpost.postcount();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: kblack,
+        actions: [
+          IconButton(onPressed: () {
+            profileShowDialog(context);
+          }, icon: iconStyle(Icons.more_vert_rounded))
+        ],
+      ),
       body: SafeArea(
         bottom: false,
         child: Padding(
@@ -41,17 +49,6 @@ class ProfileScreen extends StatelessWidget {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        const Spacer(),
-                        IconButton(
-                            onPressed: () async {
-                              await auth.signOut();
-                              Get.offAll(LoginScreen());
-                            },
-                            icon: iconStyle(Icons.logout))
-                      ],
-                    ),
                     kheight30,
                     CircleAvatar(
                         radius: 70,
@@ -185,14 +182,6 @@ class ProfileScreen extends StatelessWidget {
                                 child: Center(child: textStyle('No Post', 20)));
                           }
 
-                          // List<PostModel> newlist = [];
-                          // for (var element in snapshot.data!.docs.toList()) {
-                          //   if (element['userid'] ==
-                          //       getpost.auth.currentUser?.uid) {
-                          //     final data = PostModel.fromMap(element);
-                          //     newlist.add(data);
-                          //   }
-                          // }
                           return GridView.count(
                             crossAxisCount: 3,
                             childAspectRatio: 1,
@@ -236,6 +225,68 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+profileShowDialog(BuildContext context){
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  showModalBottomSheet(
+    shape: OutlineInputBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15))),
+    backgroundColor: kdarkgrey,
+    context: context, builder: (context) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Divider(color: kwhite,endIndent: 130,indent: 130,thickness: 2,),
+          kheight30,
+          Expanded(
+            child: ListView(
+              children: [
+                InkWell(
+              child: SingleListTile(icon: Icons.person, text: 'About'),
+            ),
+            InkWell(
+              child: SingleListTile(icon: Icons.list_alt_sharp, text: 'Terms and condition'),
+            ),
+            InkWell(
+              child: SingleListTile(icon: Icons.privacy_tip, text: 'Privacy'),
+            ),
+            InkWell(
+              onTap: () async{
+                await auth.signOut();
+                Get.offAll(LoginScreen());
+              },
+              child: SingleListTile(icon: Icons.logout, text: 'Logout'),
+            ),
+              ],
+            ),
+          )
+          
+        ],
+      ),
+    );
+  },);
+}
+
+class SingleListTile extends StatelessWidget {
+   SingleListTile({super.key,required this.icon,required this.text});
+  String text;
+  IconData icon;
+  @override
+  Widget build(BuildContext context) {
+    return  Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          iconStyle(icon),
+          kwidth10,
+          textStyle(text, 15)
+        ],
       ),
     );
   }

@@ -10,25 +10,25 @@ class MessageController extends GetxController{
   CollectionReference chatGroupdata = FirebaseFirestore.instance.collection('chatgroupdata');
   RxList chatGroupList = [].obs;
   
-  sendmessage(String receiverId,String message,String image,String name,String token){
+  sendmessage(String receiverId,String message,String image,String name,String token,String postimg){
     final time = Timestamp.now();
     final curreuserid = auth.currentUser!.uid;
-    final newmessage = MessageModel(senderId: curreuserid, receiverId: receiverId, message: message, time: time);
+    final newmessage = MessageModel(senderId: curreuserid, receiverId: receiverId, message: message, time: time,postimg:postimg );
     List<String> ids = [curreuserid,receiverId];
     ids.sort();
     String chatRoomId= ids.join("_");
     chatdata.doc(chatRoomId).collection('messages').add(newmessage.toMap());
-    final lastmessage = {
-      'lastmessage':message,
-      'name':name,
-      'image':image,
-      'time':time,
-      'userid':receiverId
-    };
-    chatGroupdata.doc(chatRoomId).set(lastmessage);
-    print(token);
+    // final lastmessage = {
+    //   'lastmessage':message,
+    //   'name':name,
+    //   'image':image,
+    //   'time':time,
+    //   'userid':receiverId
+    // };
+    // chatGroupdata.doc(chatRoomId).set(lastmessage);
     pushNotificationController.sendNotification('New Messge', message, token);
   }
+
 
   Stream <QuerySnapshot> getMessage(receiverId){
     List <String> ids = [auth.currentUser!.uid,receiverId];

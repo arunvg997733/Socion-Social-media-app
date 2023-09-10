@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/view/others_profile_screen/screen_others_profile.dart';
 import 'package:socion/view/widget/widget.dart';
 
 // ignore: must_be_immutable
@@ -28,37 +29,42 @@ class FollowScreen extends StatelessWidget {
                     final data = controller.followinglist.value[index];
                     return Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                    image: NetworkImage(data['image']),
-                                    fit: BoxFit.cover)),
-                          ),
-                          kwidth30,
-                          textStyle(data['name'], 12),
-                          // Spacer(),
-                          // Container(
-                          //     width: 80,
-                          //     height: 30,
-                          //     decoration: BoxDecoration(
-                          //         borderRadius: BorderRadius.circular(10),
-                          //         gradient: const LinearGradient(colors: [
-                          //           Color(0xffF65F53),
-                          //           Color(0xffDE3377),
-                          //         ])),
-                          //     child: TextButton(
-                          //       onPressed: () async {
-
-                          //       },
-                          //       child: Center(child: textStyle('following', 12)),
-                          //     ),
-                          //   ),
-                        ],
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(OtherProfileScreen(userId: data['userid']));
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      image: NetworkImage(data['image']),
+                                      fit: BoxFit.cover)),
+                            ),
+                            kwidth30,
+                            textStyle(data['name'], 12),
+                            // Spacer(),
+                            // Container(
+                            //     width: 80,
+                            //     height: 30,
+                            //     decoration: BoxDecoration(
+                            //         borderRadius: BorderRadius.circular(10),
+                            //         gradient: const LinearGradient(colors: [
+                            //           Color(0xffF65F53),
+                            //           Color(0xffDE3377),
+                            //         ])),
+                            //     child: TextButton(
+                            //       onPressed: () async {
+                      
+                            //       },
+                            //       child: Center(child: textStyle('following', 12)),
+                            //     ),
+                            //   ),
+                          ],
+                        ),
                       ),
                     );
                   },
