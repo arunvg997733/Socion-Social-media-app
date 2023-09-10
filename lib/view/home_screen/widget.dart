@@ -123,43 +123,7 @@ class StoryWidget extends StatelessWidget {
   }
 }
 
-Sharedialog(BuildContext context,String image) {
-  final getfollow = Get.put(UserProfileController());
-  getfollow.getfollowerList(getfollow.auth.currentUser!.uid);
-  showModalBottomSheet(
-    backgroundColor: Colors.transparent,
-    context: context,
-    builder: (context) {
-      return Container(
-          decoration: const BoxDecoration(
-              color: kdarkgrey,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-          child: Column(
-            children: [
-              kheight30,
-              textStyle('Share', 20),
-              kheight10,
-              GetBuilder<UserProfileController>(
-                builder: (controller) {
-                  return Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        final data = controller.followinglist.value[index];
-                        return ShareTile(
-                          data: data,postimg: image,
-                        );
-                      },
-                      itemCount: getfollow.followinglist.length,
-                    ),
-                  );
-                },
-              ),
-            ],
-          ));
-    },
-  );
-}
+
 
 class ShareTile extends StatelessWidget {
   ShareTile({super.key, required this.data,required this.postimg});

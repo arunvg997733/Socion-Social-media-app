@@ -12,7 +12,7 @@ class PostController extends GetxController {
   RxInt userpostcount = 0.obs;
   RxBool userlike = false.obs;
   RxInt likeCount = 0.obs;
-  // RxList countlist = [].obs;
+
 
   FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference userdata =
@@ -142,8 +142,9 @@ class PostController extends GetxController {
     getnoti.addnotification(userId, postimage,'commented on your post',postId,text);
   }
 
-  getlength() async {
-    final data = await likeandcommentdata.get();
-    data.docs.length;
-  }
+  // getlength() async {
+  //   final data = await likeandcommentdata.get();
+  //   data.docs.length;
+  // }
+
 }

@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             final postdata = snapshot.data!.docs[index];
                             String time =
                                 getpost.formatTimeAgo(postdata['time'].toDate());
+                                
                             return Column(
                               children: [
                                 SizedBox(
@@ -158,7 +159,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     postId: postdata.id,
                                                   ));
                                             },
-                                            // child: Obx(() => textStyle('Likes ${getpost.countlist[index]}', 12))
                                             child: StreamBuilder(
                                                 stream: getpost
                                                     .likeandcommentdata
@@ -283,8 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     }),
-                kheight30,
-                kheight30
               ],
             ),
           ),

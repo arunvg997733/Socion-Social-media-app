@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/profile_pic_contoller.dart';
+import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/view/home_screen/widget.dart';
 
 Icon iconStyle(IconData icon, [double? size]) {
   return Icon(
@@ -48,19 +50,20 @@ Widget MessagetextStyle(String text, double size) {
     style: TextStyle(
       color: kwhite,
       fontSize: size,
-      
     ),
   );
 }
 
-Widget NotificationtextStyle({required String text,required double size,int? maxline}) {
+Widget NotificationtextStyle(
+    {required String text, required double size, int? maxline}) {
   return Text(
     text,
     style: TextStyle(
       overflow: TextOverflow.ellipsis,
       color: kwhite,
       fontSize: size,
-    ),maxLines: maxline,
+    ),
+    maxLines: maxline,
   );
 }
 
@@ -167,89 +170,101 @@ class UserDetails extends StatelessWidget {
   }
 }
 
-PersistentBottomSheetController<dynamic> showComment(
-    BuildContext context, String data,String postimage,String userId) {
+showComment(
+    BuildContext context, String postid, String postimage, String userId) {
   final getpost = Get.put(PostController());
-  return showBottomSheet(
-    backgroundColor: Colors.transparent,
+  return showModalBottomSheet(
+    shape: OutlineInputBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight:Radius.circular(15))),
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: kdarkgrey,
     context: context,
     builder: (context) {
       TextEditingController commentctr = TextEditingController();
       return StreamBuilder(
           stream: getpost.likeandcommentdata
-              .doc(data)
+              .doc(postid)
               .collection('comment')
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-            return ClipRRect(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              child: Container(
-                color: kdarkgrey,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      kheight30,
-                      textStyle('Comments', 20),
-                      divider(),
-                      Expanded(
-                          child: snapshot.data!.docs.isEmpty
-                              ? Center(child: textStyle('No comments', 15))
-                              : ListView.separated(
-                                  itemBuilder: (context, index) {
-                                    final commentdata =
-                                        snapshot.data!.docs[index];
-                                        final time = getpost.formatTimeAgo(commentdata['time'].toDate());
-                                    return Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            UserDetails(
-                                              stream: getpost.userdata
-                                                  .doc(commentdata["userid"])
-                                                  .snapshots(),
-                                            ),
-                                            kwidth10,
-                                            Expanded(child: textStyle(commentdata['comment'], 15)),
-                                            
-                                            
-                                          ],
-                                        ),
-                                        textStyle(time, 10)
-                                      ],
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return divider();
-                                  },
-                                  itemCount: snapshot.data!.docs.length)),
-                      kheight10,
-                      TextFieldWidget(controller: commentctr, hint: 'Comment'),
-                      kheight10,
-                      Container(
-                        width: 100,
-                        height: 35,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: const LinearGradient(colors: [
-                              Color(0xffF65F53),
-                              Color(0xffDE3377),
-                            ])),
-                        child: TextButton(
-                          onPressed: () async {
-                            getpost.comment(commentctr.text, data,userId,postimage);
-                            Get.back();
-                          },
-                          child: Center(child: textStyle('Post', 14)),
+            return Padding(
+              padding:  EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  children: [
+                    textStyle('Comments', 20),
+                    kheight10,
+                    Expanded(
+                        child: snapshot.data!.docs.isEmpty
+                            ? Center(child: textStyle('No comments', 15))
+                            : ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final commentdata =
+                                      snapshot.data!.docs[index];
+                                  final time = getpost.formatTimeAgo(
+                                      commentdata['time'].toDate());
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          UserDetails(
+                                            stream: getpost.userdata
+                                                .doc(commentdata["userid"])
+                                                .snapshots(),
+                                          ),
+                                          kwidth10,
+                                          Expanded(
+                                              child: textStyle(
+                                                  commentdata['comment'],
+                                                  15)),
+                                        ],
+                                      ),
+                                      textStyle(time, 10)
+                                    ],
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return divider();
+                                },
+                                itemCount: snapshot.data!.docs.length)),
+                    kheight10,
+                    Container(
+                      decoration: BoxDecoration(
+                          color: kblack,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: TextField(
+                              style: TextStyle(color: kwhite),
+                              controller: commentctr,
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Comments...',
+                                  hintStyle: TextStyle(color: kwhite)),
+                            )),
+                            TextButton(
+                              onPressed: () {
+                                if (commentctr.text.isNotEmpty) {
+                                  getpost.comment(commentctr.text, postid,
+                                      userId, postimage);
+                                  Get.back();
+                                }
+                                commentctr.clear();
+                              },
+                              child: textStyle('Post', 15),
+                            )
+                          ],
                         ),
                       ),
-                      kheight10,
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -349,4 +364,42 @@ class ImagePicker extends StatelessWidget {
                     )),
         ));
   }
+}
+
+Sharedialog(BuildContext context,String image) {
+  final getfollow = Get.put(UserProfileController());
+  getfollow.getfollowerList(getfollow.auth.currentUser!.uid);
+  showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: context,
+    builder: (context) {
+      return Container(
+          decoration: const BoxDecoration(
+              color: kdarkgrey,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+          child: Column(
+            children: [
+              kheight30,
+              textStyle('Share', 20),
+              kheight10,
+              GetBuilder<UserProfileController>(
+                builder: (controller) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        final data = controller.followinglist.value[index];
+                        return ShareTile(
+                          data: data,postimg: image,
+                        );
+                      },
+                      itemCount: getfollow.followinglist.length,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ));
+    },
+  );
 }

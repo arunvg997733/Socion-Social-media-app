@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
+import 'package:socion/view/Like_screen/screen_like.dart';
 import 'package:socion/view/post_edit_screen/screen%20_post_edit.dart';
 import 'package:socion/view/widget/widget.dart';
 import 'package:photo_view/photo_view.dart';
@@ -49,51 +51,7 @@ class CurrentUserPostViewScreen extends StatelessWidget {
                           UserDetails(
                               stream:
                                   getOther.userdata.doc(userId).snapshots()),
-                          IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  backgroundColor: kdarkgrey,
-                                  context: context,
-                                  builder: (context) {
-                                    return userId ==
-                                            getpost.auth.currentUser?.uid
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      getpost
-                                                          .deletePost(data.id);
-                                                      getpost.postcount();
-                                                    },
-                                                    child: textStyle(
-                                                        'Delete post', 20)),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Get.to(PostEditScreen(
-                                                        image: data['image'],
-                                                        discription:
-                                                            data['discription'],
-                                                        location:
-                                                            data['location'],
-                                                        postId: data.id,
-                                                      ));
-                                                    },
-                                                    child: textStyle(
-                                                        'Edit post', 20))
-                                              ],
-                                            ),
-                                          )
-                                        : Center(
-                                            child: textStyle(
-                                                ' need to complete', 15));
-                                  },
-                                );
-                              },
-                              icon: iconStyle(Icons.more_vert))
+                          ProfilePopupMenu(getpost: getpost, data: data),
                         ],
                       ),
                       SizedBox(
@@ -112,32 +70,8 @@ class CurrentUserPostViewScreen extends StatelessWidget {
                       divider(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                iconStyle(Icons.favorite_border),
-                                kwidth10,
-                                textStyle('Like', 15)
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                iconStyle(Icons.mode_comment_outlined),
-                                kwidth10,
-                                textStyle('Comment', 15)
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                iconStyle(Icons.share),
-                                kwidth10,
-                                textStyle('Share', 15),
-                              ],
-                            )
-                          ],
-                        ),
+                        child:
+                            LikeCommentShareWidget(data: data, userId: userId),
                       ),
                     ],
                   );
@@ -145,6 +79,108 @@ class CurrentUserPostViewScreen extends StatelessWidget {
               );
             }),
       ),
+    );
+  }
+}
+
+class ProfilePopupMenu extends StatelessWidget {
+  const ProfilePopupMenu({
+    super.key,
+    required this.getpost,
+    required this.data,
+  });
+
+  final PostController getpost;
+  final QueryDocumentSnapshot<Map<String, dynamic>> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton(
+      icon: iconStyle(Icons.more_vert_outlined),
+      color: kdarkgrey,
+      onSelected: (value) {
+        if (value == 'delete') {
+          getpost.deletePost(data.id);
+          getpost.postcount();
+        } else if (value == 'edit') {
+          Get.to(PostEditScreen(
+            image: data['image'],
+            discription: data['discription'],
+            location: data['location'],
+            postId: data.id,
+          ));
+        }
+      },
+      itemBuilder: (context) {
+        return [
+          PopupMenuItem(
+            child: textStyle('Delete', 12),
+            value: 'delete',
+          ),
+          PopupMenuItem(
+            child: textStyle('Edit', 12),
+            value: 'edit',
+          )
+        ];
+      },
+    );
+  }
+}
+
+class LikeCommentShareWidget extends StatelessWidget {
+  const LikeCommentShareWidget({
+    super.key,
+    required this.data,
+    required this.userId,
+  });
+
+  final QueryDocumentSnapshot<Map<String, dynamic>> data;
+  final String? userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        InkWell(
+          onTap: () {
+            Get.to(() => LikeScreen(
+                  postId: data.id,
+                ));
+          },
+          child: Row(
+            children: [
+              iconStyle(Icons.favorite_border),
+              kwidth10,
+              textStyle('Like', 15)
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            showComment(context, data.id, data['image'], userId!);
+          },
+          child: Row(
+            children: [
+              iconStyle(Icons.mode_comment_outlined),
+              kwidth10,
+              textStyle('Comment', 15)
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Sharedialog(context, data['image']);
+          },
+          child: Row(
+            children: [
+              iconStyle(Icons.share),
+              kwidth10,
+              textStyle('Share', 15),
+            ],
+          ),
+        )
+      ],
     );
   }
 }
