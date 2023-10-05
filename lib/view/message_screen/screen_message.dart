@@ -36,7 +36,7 @@ class MessageScreen extends StatelessWidget {
 
       GetBuilder<UserSearchController>(builder: (controller) {
         return Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(10.0),
           child: ListView.separated(itemBuilder: (context, index) {
           // ignore: invalid_use_of_protected_member
           final data = controller.allList.value[index];
@@ -98,8 +98,13 @@ class MessageTile extends StatelessWidget {
           textStyle(userData.name!, 12),
         ],
       ),
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(userData.image!) ,
+      leading: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(image:userData.image ==''?AssetImage('assets/user.jpg') as ImageProvider: NetworkImage(userData.image!),fit: BoxFit.cover)
+        ) ,
       ),
     );
   }

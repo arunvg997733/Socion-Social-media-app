@@ -10,6 +10,8 @@ import 'package:socion/view/follw_screen/screen_follow.dart';
 import 'package:socion/view/login_screen/screen_login.dart';
 import 'package:socion/view/profile_edit_screen/screen_profile_edit.dart';
 import 'package:socion/view/current_user_post_view_screen/screen_current_user_post_view.dart';
+import 'package:socion/view/view_image/screen_view-image.dart';
+import 'package:socion/view/widget/privacy_widget.dart';
 import 'package:socion/view/widget/widget.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -50,12 +52,17 @@ class ProfileScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     kheight30,
-                    CircleAvatar(
-                        radius: 70,
-                        backgroundImage: snapshot.data!['image'] == ''
-                            ? const AssetImage('assets/user.jpg')
-                                as ImageProvider
-                            : NetworkImage(snapshot.data!['image'])),
+                    InkWell(
+                      onTap: () {
+                        Get.to(ViewImageScreen(image:snapshot.data!['image']));
+                      },
+                      child: CircleAvatar(
+                          radius: 70,
+                          backgroundImage: snapshot.data!['image'] == ''
+                              ? const AssetImage('assets/user.jpg')
+                                  as ImageProvider
+                              : NetworkImage(snapshot.data!['image'])),
+                    ),
                     kheight30,
                     textStyle(snapshot.data!['name'], 20),
                     kheight10,
@@ -185,8 +192,8 @@ class ProfileScreen extends StatelessWidget {
                           return GridView.count(
                             crossAxisCount: 3,
                             childAspectRatio: 1,
-                            crossAxisSpacing: 2,
-                            mainAxisSpacing: 2,
+                            crossAxisSpacing: 3,
+                            mainAxisSpacing: 3,
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             children: List.generate(
@@ -196,6 +203,7 @@ class ProfileScreen extends StatelessWidget {
                                 final data = snapshot.data!.docs[index];
                                 return InkWell(
                                   onTap: () {
+                                    print(index);
                                     Get.to(() => CurrentUserPostViewScreen(
                                           index: index,
                                           userId: getpost.auth.currentUser?.uid,
@@ -238,7 +246,7 @@ profileShowDialog(BuildContext context){
     backgroundColor: kdarkgrey,
     context: context, builder: (context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -248,12 +256,33 @@ profileShowDialog(BuildContext context){
             child: ListView(
               children: [
                 InkWell(
+                  onTap: () {
+                    showAboutDialog(
+                      context: context,
+                      applicationName: 'Socion',
+                      applicationIcon: Image.asset('assets/socion_logo.png',height: 32,width: 32,),
+                      applicationVersion: '1.0.1',
+                      children: [
+                        Text('Socion is a social media application were users can post their images. Users can interact with other users through chat also react to others users post by like and comment.')
+                      ]
+                      );
+                  },
               child: SingleListTile(icon: Icons.person, text: 'About'),
             ),
             InkWell(
+              onTap: () {
+                showDialog(context: context, builder: (context) {
+                  return privacydialoge(mdFileName: 'term_condition.md' );
+                },);
+              },
               child: SingleListTile(icon: Icons.list_alt_sharp, text: 'Terms and condition'),
             ),
             InkWell(
+              onTap: () {
+                showDialog(context: context, builder: (context) {
+                  return privacydialoge(mdFileName: 'privacy_policy.md' );
+                },);
+              },
               child: SingleListTile(icon: Icons.privacy_tip, text: 'Privacy'),
             ),
             InkWell(
@@ -285,7 +314,7 @@ class SingleListTile extends StatelessWidget {
         children: [
           iconStyle(icon),
           kwidth10,
-          textStyle(text, 15)
+          textStyle(text, 20)
         ],
       ),
     );

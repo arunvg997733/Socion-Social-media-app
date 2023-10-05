@@ -22,7 +22,7 @@ class FollowScreen extends StatelessWidget {
         body: GetBuilder<UserProfileController>(
           builder: (controller) {
             return Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
               child: ListView.separated(
                   itemBuilder: (context, index) {
                     // ignore: invalid_use_of_protected_member
@@ -41,7 +41,7 @@ class FollowScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
-                                      image: NetworkImage(data['image']),
+                                      image:data['image']==''?AssetImage('assets/user.jpg') as ImageProvider: NetworkImage(data['image']),
                                       fit: BoxFit.cover)),
                             ),
                             kwidth30,

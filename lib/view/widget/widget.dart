@@ -156,8 +156,8 @@ class UserDetails extends StatelessWidget {
                   width: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                        image: NetworkImage(snapshot.data!['image']),
+                    image:DecorationImage(
+                        image:snapshot.data!['image'] == ''?AssetImage('assets/user.jpg') as ImageProvider:NetworkImage(snapshot.data!['image']),
                         fit: BoxFit.cover),
                   ),
                 ),
@@ -193,7 +193,7 @@ showComment(
             return Padding(
               padding:  EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Padding(
-                padding: EdgeInsets.all(15),
+                padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
                     textStyle('Comments', 20),
@@ -403,3 +403,32 @@ Sharedialog(BuildContext context,String image) {
     },
   );
 }
+
+class PostUserWidget extends StatelessWidget {
+  const PostUserWidget({
+    super.key,
+    required this.postData,
+  });
+
+  final Map<String, dynamic> postData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 45,
+          height: 45,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(image:postData['userimage']==''?AssetImage('assets/user.jpg') as ImageProvider:NetworkImage(postData['userimage']),fit: BoxFit.cover)
+          ),
+        ),
+        kwidth10,
+        textStyle(postData['username'], 12)
+      ],
+    );
+  }
+}
+
+

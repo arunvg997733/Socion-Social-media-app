@@ -26,7 +26,7 @@ class LikeScreen extends StatelessWidget {
             }
             return Padding(
               padding: const EdgeInsets.all(10.0),
-              child: ListView.separated(
+              child: snapshot.data!.docs.length == 0 ? Center(child: textStyle('No Likes', 15)): ListView.separated(
                   itemBuilder: (context, index) {
                     final data = snapshot.data!.docs[index];
                     return UserDetails(
@@ -36,7 +36,7 @@ class LikeScreen extends StatelessWidget {
                   separatorBuilder: (context, index) {
                     return divider();
                   },
-                  itemCount: snapshot.data!.size),
+                  itemCount: snapshot.data!.size)
             );
           }),
     );

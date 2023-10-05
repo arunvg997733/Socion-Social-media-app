@@ -24,7 +24,7 @@ class NotificationScreen extends StatelessWidget {
               getnoti.updateNotification();
             },
             child:getnoti.notificationlist.isEmpty ? Center(child: textStyle('No Notification', 20)) :  Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(10.0),
               child: ListView.separated(
                   itemBuilder: (context, index) {
                     Map<String, dynamic> data =
@@ -39,7 +39,6 @@ class NotificationScreen extends StatelessWidget {
                             items: <PopupMenuEntry>[
                               PopupMenuItem(
                                   onTap: () {
-                                    print(data['userid']+data['postid']+data['matter']);
                                     getnoti.deleteNotification(
                                         data['postid']+data['matter']);
                                   },
@@ -48,7 +47,7 @@ class NotificationScreen extends StatelessWidget {
                       },
                       leading: CircleAvatar(
                         radius: 25,
-                        backgroundImage: NetworkImage(data['image']),
+                        backgroundImage:data['image']==''?AssetImage('assets/user.jpg') as ImageProvider:NetworkImage(data['image']),
                       ),
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

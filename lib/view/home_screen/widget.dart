@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/messagecontroller.dart';
+import 'package:socion/controller/post_controller.dart';
 import 'package:socion/controller/story_controller.dart';
 import 'package:socion/controller/userprofilecontroller.dart';
 import 'package:socion/core/constant.dart';
@@ -44,7 +45,7 @@ class StoryWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
-                              image: NetworkImage(
+                              image:getStory.userStoryImage.value ==''? AssetImage('assets/user.jpg') as ImageProvider: NetworkImage(
                                   getStory.userStoryImage.value),
                               fit: BoxFit.cover),
                         ),
@@ -102,7 +103,7 @@ class StoryWidget extends StatelessWidget {
                               borderRadius:
                                   BorderRadius.circular(15),
                               image: DecorationImage(
-                                  image:
+                                  image:data['image']==''?AssetImage('assets/user.jpg') as ImageProvider:
                                       NetworkImage(data['image']),
                                   fit: BoxFit.cover),
                             ),
@@ -132,13 +133,11 @@ class ShareTile extends StatelessWidget {
   final getmsg = Get.put(MessageController());
   @override
   Widget build(BuildContext context) {
-    print('arun');
-    print(data['image']);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(data['image']),
+          backgroundImage:data['image']==''?AssetImage('assets/user.jpg') as ImageProvider: NetworkImage(data['image']),
         ),
         title: Row(
           children: [
@@ -161,6 +160,81 @@ class ShareTile extends StatelessWidget {
             child: Center(child: textStyle('Send', 12)),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class LikeCommentShareWidget extends StatelessWidget {
+   LikeCommentShareWidget({
+    super.key,
+    required this.rxlike,
+    required this.postData,
+  });
+
+  final RxBool rxlike;
+  final Map<String, dynamic> postData;
+  final getpost = Get.put(PostController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Flex(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        direction: Axis.horizontal,
+      children: [
+        InkWell(
+          onTap: ()async{
+            if(rxlike == false){
+              getpost.like(postData['postid'], postData['postimage'], postData['userid']);
+              rxlike.value = true;
+              getpost.getAllPostData();
+            }else{
+              rxlike.value = false;
+              getpost.dislike(postData['postid']);
+              getpost.getAllPostData();
+            }
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Obx(() => iconStyle(rxlike==true?Icons.favorite:Icons.favorite_outline)),
+              kwidth10,
+              textStyle('Like', 15),
+            ],
+          ),
+        ),
+        
+        InkWell(
+          onTap: () {
+            showComment(context, postData['postid'], postData['postimage'], postData['userid']);
+            getpost.getAllPostData();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              iconStyle(Icons.mode_comment_outlined),
+              kwidth10,
+              textStyle('Comment', 15),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Sharedialog(context, postData['postimage']);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              iconStyle(Icons.share),
+              kwidth10,
+              textStyle('Share', 15),
+            ],
+          ),
+        ),
+        
+      ],
       ),
     );
   }

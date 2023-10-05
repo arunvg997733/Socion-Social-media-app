@@ -74,6 +74,7 @@ class AuthController extends GetxController {
 
   signOut() async {
     await auth.signOut();
+    await google.signOut();
   }
 
   addUserDetails(String name, String emaildata) async {

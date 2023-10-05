@@ -15,7 +15,7 @@ class SearchScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
               kheight10,
@@ -40,7 +40,7 @@ class SearchScreen extends StatelessWidget {
                           },
                           title: Row(
                             children: [
-                              textStyle(data.name!, 10),
+                              textStyle(data.name!, 14),
                             ],
                           ),
                           leading: Container(
@@ -48,7 +48,7 @@ class SearchScreen extends StatelessWidget {
                             height: 50,
                             decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: NetworkImage(data.image!),
+                                    image:data.image ==''?AssetImage('assets/user.jpg') as ImageProvider: NetworkImage(data.image),
                                     fit: BoxFit.cover),
                                 borderRadius: BorderRadius.circular(10)),
                           ),

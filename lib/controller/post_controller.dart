@@ -12,6 +12,8 @@ class PostController extends GetxController {
   RxInt userpostcount = 0.obs;
   RxBool userlike = false.obs;
   RxInt likeCount = 0.obs;
+  RxBool isLoadinghome = false.obs;
+  RxBool isLoadingprofile = false.obs;
 
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -72,7 +74,7 @@ class PostController extends GetxController {
   String formatTimeAgo(DateTime timestamp) {
     return timeago.format(timestamp, locale: 'en_long');
   }
-
+  // Post count getting //
   postcount() async {
     final data = await postData
         .doc(auth.currentUser?.uid)
@@ -110,29 +112,27 @@ class PostController extends GetxController {
           .doc(postid)
           .collection('like')
           .doc(auth.currentUser?.uid);
-      // final postdata = postData.doc(postid).collection('like');
-
       lcdata.delete();
     } catch (e) {
       showSnacksBar('Error', e.toString());
     }
   }
 
-  Future<bool> checklike(String postid) async {
-    try {
-      final data = await likeandcommentdata
-          .doc(postid)
-          .collection('like')
-          .doc(auth.currentUser?.uid)
-          .get();
-      if (data['userid'] == auth.currentUser?.uid) {
-        return true;
-      }
-    } catch (e) {
-      print("like error = ${e.toString()}");
-    }
-    return false;
-  }
+  // Future<bool> checklike(String postid) async {
+  //   try {
+  //     final data = await likeandcommentdata
+  //         .doc(postid)
+  //         .collection('like')
+  //         .doc(auth.currentUser?.uid)
+  //         .get();
+  //     if (data['userid'] == auth.currentUser?.uid) {
+  //       return true;
+  //     }
+  //   } catch (e) {
+  //     print("like error = ${e.toString()}");
+  //   }
+  //   return false;
+  // }
 
   comment(String text, String postId,String userId,String postimage) {
     final time = DateTime.now();
@@ -147,4 +147,89 @@ class PostController extends GetxController {
   //   data.docs.length;
   // }
 
+
+  // new post created functions//
+
+  RxList postList = [].obs;
+  RxList singlePostList = [].obs;
+
+
+  
+
+  getAllPostData()async{
+    postList.value.clear();
+    final data =await FirebaseFirestore.instance.collectionGroup('singleuserpost').get();
+    for(var element in data.docs){
+      final singleUserData =await userdata.doc(element['userid']).get();
+      final postlike = await likeandcommentdata.doc(element.id).collection('like').get();
+      final postcomment = await likeandcommentdata.doc(element.id).collection('comment').get();
+      bool status = await getLikeStatus(element.id);
+      int postLikeCount = postlike.docs.length;
+      int commentcount = postcomment.docs.length;
+      String time = timeago.format(element['time'].toDate());
+      final postData = {
+        'username':singleUserData['name'],
+        'userimage':singleUserData['image'],
+        'userid':element['userid'],
+        'postimage':element['image'],
+        'postid':element.id,
+        'time':time,
+        'discription':element['discription'],
+        'location':element['location'],
+        'like':postLikeCount,
+        'comment': commentcount,
+        'likestatus':status
+      };
+      postList.value.add(postData);
+    }
+    update();
+    isLoadinghome.value = true;
+  }
+
+  Future<bool> getLikeStatus(String postid)async{
+    final data = await likeandcommentdata
+          .doc(postid)
+          .collection('like')
+          .doc(auth.currentUser?.uid)
+          .get();
+          if(data.exists){
+            return true;
+          }
+          return false;
+    
+  }
+
+  getSinglePostData(String userId)async{
+    singlePostList.value.clear();
+    final data =await postData.doc(userId).collection('singleuserpost').get();
+    for(var element in data.docs){
+      final singleUserData =await userdata.doc(element['userid']).get();
+      final postlike = await likeandcommentdata.doc(element.id).collection('like').get();
+      final postcomment = await likeandcommentdata.doc(element.id).collection('comment').get();
+      bool status = await getLikeStatus(element.id);
+      int postLikeCount = postlike.docs.length;
+      int commentcount = postcomment.docs.length;
+      String time = timeago.format(element['time'].toDate());
+      final postData = {
+        'username':singleUserData['name'],
+        'userimage':singleUserData['image'],
+        'userid':element['userid'],
+        'postimage':element['image'],
+        'postid':element.id,
+        'time':time,
+        'discription':element['discription'],
+        'location':element['location'],
+        'like':postLikeCount,
+        'comment': commentcount,
+        'likestatus':status
+      };
+      singlePostList.value.add(postData);
+    }
+    isLoadingprofile.value = true;
+    update();
+    
+  }
+
 }
+
+

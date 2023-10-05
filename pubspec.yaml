@@ -37,6 +37,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications: ^15.1.1
+  flutter_markdown: ^0.6.17+3
   get: ^4.6.5
   google_sign_in: ^6.1.4
   http: ^1.1.0
@@ -67,6 +68,9 @@ flutter:
     - assets/Socion Logo.jpg
     - assets/car.jpeg
     - assets/google.png
+    - assets/privary_term/privacy_policy.md
+    - assets/privary_term/term_condition.md
+    - assets/socion_logo.png
     # - images/a_dot_burr.jpeg
     # - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see

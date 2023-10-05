@@ -8,6 +8,7 @@ import 'package:socion/core/constant.dart';
 import 'package:socion/view/chatscreen/screen_chat.dart';
 import 'package:socion/view/current_user_post_view_screen/screen_current_user_post_view.dart';
 import 'package:socion/view/follw_screen/screen_follow.dart';
+import 'package:socion/view/view_image/screen_view-image.dart';
 import 'package:socion/view/widget/widget.dart';
 
 // ignore: must_be_immutable
@@ -48,26 +49,23 @@ class OtherProfileScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      const Spacer(),
-                      IconButton(
-                          onPressed: () async {},
-                          icon: iconStyle(Icons.more_vert))
-                    ],
-                  ),
                   kheight30,
                   GetX<UserProfileController>(
                     builder: (controller) {
                       name =controller.user.value.name!;
                       image = controller.user.value.image;
                       token = controller.user.value.image;
-                      return CircleAvatar(
-                          radius: 70,
-                          backgroundImage: controller.user.value.image == ""
-                              ? const AssetImage('assets/user.jpg')
-                                  as ImageProvider
-                              : NetworkImage(controller.user.value.image!));
+                      return InkWell(
+                        onTap: () {
+                          Get.to(ViewImageScreen(image: controller.user.value.image!));
+                        },
+                        child: CircleAvatar(
+                            radius: 70,
+                            backgroundImage: controller.user.value.image == ""
+                                ? const AssetImage('assets/user.jpg')
+                                    as ImageProvider
+                                : NetworkImage(controller.user.value.image!)),
+                      );
                     },
                   ),
                   kheight30,

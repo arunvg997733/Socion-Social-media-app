@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:socion/controller/navbar_controller.dart';
@@ -30,6 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
     getStory.autodeletStory();
     getStory.getimage(getStory.auth.currentUser!.uid);
     getStory.getStoryList();
+    //calling the function at one time after building the widget//
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) { 
+      getpost.getAllPostData();
+    });
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -52,237 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 //Story//
                 StoryWidget(getStory: getStory),
                 //post//
-                StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collectionGroup('singleuserpost')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return Column(
-                        children: List.generate(
-                          snapshot.data!.docs.length,
-                          (index) {
-                            final postdata = snapshot.data!.docs[index];
-                            String time =
-                                getpost.formatTimeAgo(postdata['time'].toDate());
-                                
-                            return Column(
-                              children: [
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (postdata['userid'] ==
-                                              getOther.auth.currentUser?.uid) {
-                                            getnav.onSelected(4);
-                                          } else {
-                                            Get.to(OtherProfileScreen(
-                                              userId: postdata['userid'],
-                                            ));
-                                          }
-                                        },
-                                        child: UserDetails(
-                                          stream: getpost.userdata
-                                              .doc(postdata['userid'])
-                                              .snapshots(),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: postdata['location'] == ''
-                                            ? null
-                                            : Row(
-                                                children: [
-                                                  iconStyle(
-                                                      Icons.location_on, 12),
-                                                  kwidth5,
-                                                  textStyle(
-                                                      postdata['location'], 10),
-                                                ],
-                                              ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        child: InkWell(
-                                          onTap: () {
-                                            Get.to(() => ViewImageScreen(
-                                                  image: postdata['image'],
-                                                ));
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            height: 300,
-                                            decoration: BoxDecoration(
-                                              color: kdarkgrey,
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      postdata['image']),
-                                                  fit: BoxFit.cover),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Row(
-                                          children: [
-                                            textStyle(postdata['discription'], 15),
-                                          ],
-                                        ),
-                                      ),
-                                      divider(),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Row(
-                                          children: [
-                                            textStyle(
-                                              time,
-                                              12,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          kwidth10,
-                                          InkWell(
-                                            onTap: () {
-                                              Get.to(() => LikeScreen(
-                                                    postId: postdata.id,
-                                                  ));
-                                            },
-                                            child: StreamBuilder(
-                                                stream: getpost
-                                                    .likeandcommentdata
-                                                    .doc(postdata.id)
-                                                    .collection('like')
-                                                    .snapshots(),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
-                                                    return textStyle(
-                                                        'Like ', 12);
-                                                  }
-                                                  return textStyle(
-                                                      'Like  ${snapshot.data!.docs.length}',
-                                                      12);
-                                                }),
-                                          ),
-                                          kwidth30,
-                                          StreamBuilder(
-                                              stream: getpost.likeandcommentdata
-                                                  .doc(postdata.id)
-                                                  .collection('comment')
-                                                  .snapshots(),
-                                              builder: (context, snapshot) {
-                                                if (snapshot.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return textStyle(
-                                                      'Comment ', 12);
-                                                }
-                                                return textStyle(
-                                                    'Comment  ${snapshot.data!.docs.length}',
-                                                    12);
-                                              }),
-                                          const Spacer(),
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: iconStyle(
-                                                Icons.star_outline_rounded),
-                                          )
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            FutureBuilder<bool>(
-                                                future:
-                                                    getpost.checklike(postdata.id),
-                                                builder: (context, snapshot) {
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      if (snapshot.data ==
-                                                          false) {
-                                                        setState(() {
-                                                          getpost.like(
-                                                              postdata.id,
-                                                              postdata['image'],
-                                                              postdata['userid']);
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          getpost
-                                                              .dislike(postdata.id);
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        snapshot.data == true
-                                                            ? iconStyle(
-                                                                Icons.favorite)
-                                                            : iconStyle(Icons
-                                                                .favorite_border),
-                                                        kwidth10,
-                                                        textStyle('Like', 15)
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                            InkWell(
-                                              onTap: () {
-                                                showComment(
-                                                    context,
-                                                    postdata.id,
-                                                    postdata['image'],
-                                                    postdata['userid']);
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  iconStyle(Icons
-                                                      .mode_comment_outlined),
-                                                  kwidth10,
-                                                  textStyle('Comment', 15)
-                                                ],
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                Sharedialog(context,postdata['image']);
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  iconStyle(Icons.share),
-                                                  kwidth10,
-                                                  textStyle('Share', 15),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                kheight30
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    }),
+                Obx(() => getpost.isLoadinghome ==false ? SizedBox(
+                  height: 500,
+                  width: double.infinity,
+                  child: Center(child: CircularProgressIndicator())) : PostListWidget())
               ],
             ),
           ),
@@ -291,3 +67,101 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+
+class PostListWidget extends StatelessWidget {
+   PostListWidget({super.key});
+
+  final getpost = Get.put(PostController()); 
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<PostController>(builder: (controller) {
+      return Column(
+      children: List.generate(getpost.postList.length, (index){
+        final data = getpost.postList[index];
+        return PostWidget(postData: data);
+      }),
+    );
+    },);
+  }
+}
+
+class PostWidget extends StatelessWidget {
+   PostWidget({super.key,required this.postData});
+   final getpost = Get.put(PostController()); 
+   final getnav = Get.put(NavBarController()); 
+   Map<String,dynamic> postData;
+  @override
+  Widget build(BuildContext context) {
+    bool like = postData['likestatus'];
+    RxBool rxlike = false.obs;
+    rxlike.value = like;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () {
+            if (postData['userid'] ==
+                  getpost.auth.currentUser?.uid) {
+                  getnav.onSelected(4);
+                } else {
+                  Get.to(OtherProfileScreen(
+                  userId: postData['userid'],
+                  ));
+                }
+          },
+          child: PostUserWidget(postData: postData)),
+        kheight5,
+        postData['location']==''?SizedBox():Row(
+          children: [
+            iconStyle(Icons.location_on,15),
+            textStyle(postData['location'], 10),
+          ],
+        ),
+        InkWell(
+          onTap: () {
+            Get.to(ViewImageScreen(image: postData['postimage']));
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical:5),
+            child: Container(
+              width: double.infinity,
+              height: 300,
+              decoration: BoxDecoration(
+                color: kdarkgrey,
+                image: DecorationImage(image: NetworkImage(postData['postimage']))
+              ),
+            ),
+          ),
+        ),
+        textStyle(postData['discription'], 15),
+        kheight5,
+        textStyle(postData['time'], 12),
+        kheight5,
+        Row(
+          children: [
+            InkWell(
+              onTap: () {
+                Get.to(LikeScreen(postId: postData['postid']));
+              },
+              child: textStyle('Like ${postData['like']}', 15)),
+            kwidth10,
+            textStyle('Comment ${postData['comment']}', 15)
+          ],
+        ),
+        divider(),
+        LikeCommentShareWidget(rxlike: rxlike , postData: postData),
+        divider(),
+        kheight5
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+

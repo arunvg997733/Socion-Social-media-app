@@ -36,7 +36,7 @@ class ChatScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(image),
+              backgroundImage: image==''?AssetImage('assets/user.jpg') as ImageProvider:NetworkImage(image),
             ),
             kwidth10,
             textStyle(name,20),
@@ -45,7 +45,7 @@ class ChatScreen extends StatelessWidget {
         backgroundColor: kblack,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
             StreamBuilder(
@@ -55,10 +55,11 @@ class ChatScreen extends StatelessWidget {
                   return textStyle(snapshot.error.toString(), 10);
                 } 
                 if(snapshot.connectionState == ConnectionState.waiting){
-                  return Expanded(child: Center(child: CircularProgressIndicator()));
+                  return const Expanded(child: Center(child: CircularProgressIndicator()));
                 }
               return Expanded(
                 child:snapshot.data!.docs.isEmpty ? Center(child: textStyle('Start new message', 15)) : ListView.separated(
+                  controller: PageController(initialPage:snapshot.data!.docs.length ),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
                   final data = snapshot.data!.docs[index];
@@ -95,7 +96,7 @@ class Message extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color:data['senderid'] == auth.currentUser!.uid ?  kdarkgrey:kmixcolorpink,
-          borderRadius:data['senderid'] == auth.currentUser!.uid ?  BorderRadius.only(bottomLeft: Radius.circular(15),topRight: Radius.circular(15),topLeft: Radius.circular(15)):BorderRadius.only(topLeft: Radius.circular(15),bottomRight: Radius.circular(15),topRight: Radius.circular(15))
+          borderRadius:data['senderid'] == auth.currentUser!.uid ?  const BorderRadius.only(bottomLeft: Radius.circular(15),topRight: Radius.circular(15),topLeft: Radius.circular(15)):const BorderRadius.only(topLeft: Radius.circular(15),bottomRight: Radius.circular(15),topRight: Radius.circular(15))
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
@@ -103,7 +104,7 @@ class Message extends StatelessWidget {
             direction: Axis.vertical,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              data['postimg'] == '' ? SizedBox(): Padding(
+              data['postimg'] == '' ? const SizedBox(): Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Container(
                   height: size.width*0.6,
@@ -113,7 +114,7 @@ class Message extends StatelessWidget {
                   ),
                 ),
               ),
-              data['message']== ''? SizedBox(): MessagetextStyle(data['message'], 14),
+              data['message']== ''? const SizedBox(): MessagetextStyle(data['message'], 14),
               kwidth10,
               MessagetextStyle(formatTime, 10)
             ],
@@ -145,7 +146,7 @@ class MessageTextField extends StatelessWidget {
         child: Row(
           children: [
              Expanded(child: TextField(
-              style: TextStyle(color: kwhite),
+              style: const TextStyle(color: kwhite),
               controller: messagectr,
               decoration: const InputDecoration(
                 border: InputBorder.none,

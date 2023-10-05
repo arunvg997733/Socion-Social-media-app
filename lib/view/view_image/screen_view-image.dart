@@ -8,7 +8,7 @@ class ViewImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: PhotoView(imageProvider: NetworkImage(image))),
+      body: SafeArea(child: PhotoView(imageProvider:image==''?AssetImage('assets/user.jpg')as ImageProvider:NetworkImage(image))),
     );
   }
 }
